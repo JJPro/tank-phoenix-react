@@ -1,45 +1,46 @@
 =================================================================
 A description of the game you intend to implement
 
-The GAME we intend to build is a 2-4 players online tank game. It is an exciting game that requires at least 2
-players and maximal 4 players to play the game. The player visits the game page and enter the specific 
-game name so as to create or join the game. Players are ordered in their timestamp to join the game 
-(First in First play). If there are already two players are in the same game, a button saying "ready" can 
-be clicked to change the player's status to ready the game. If all players in the game are in "ready" status, 
-we show a count down for 3 seconds and then the game will start. After 4 players are in the game, other 
-players who join the game will be observers and they can watch the game live show just like in the twitch.tv.
-When the game is started, other people who join the game will automatically become observers even when some
-player was killed in the game and left.
+  The GAME we intend to build is a 2-4-player online tank game with a builtin chat room.
+  It is an exciting game that requires at least 2 players and maximal 4 players to play.
+  Users can either create a new game room, or join others.
+  A new game room is created by clicking the "Create New Room" button at the top of the page.
+  Created rooms will be listed as cards on the home page, and any user can click a card to join that specific game.
+  When user enters a room, he/she can choose to be a player or observer.
+  A room can have a maximum of 4 players. When the players seats are full, any subsequent joiners will only be provided the option to observe, unless a player exits the room.
+  It requires at least two players to start the game.
+  The room owner is shown a option to start the game when player numbers satisfies the aforementioned requirements.
+  A 7-second countdown appears after game start.
+  During the gameplay, new comers are given the option to observe (Popup alert with button such that "Game already started, click to observe").
 
 =================================================================
 What players will see on the screen
 
-The screen is divided into 2 parts. One part is the game screen (75% on left), on the top is an instruction
-states how to play the game, and below the instruction is the real board for tanks to fight each other. The
-another part is a chat room (25% on right), each player can write some texts and send to other players with the
-user name (or tank color). In the game board, each player will be assigned a color for its tank, and on the
-board, there are some grids that can be shoot to be destroyed and some grids cannot be destroyed so as to act
-like some type of pretection for the tank. In advanced version, the player can see how much bullets they left 
-and what else weapons they have in the game board screen.
+  The Entry Page:
+    The main page displays open rooms and a button to create a new room.
+
+  Game Room:
+    The screen is partitioned into 2 main parts.
+    On the left is the game board(75% on left), the top portion of the board shows game instructions, player name, health level and score.
+    On the right is a chat room(25% on right). Players can send messages to each other with their
+    user name (or tank color).
+    Each player is assigned a color for his tank.
+
+    The game board contains player tanks and randomly placed walls of two kinds.
+    Brick walls can be destroyed, and metal walls can't.
 
 =================================================================
 What kind of actions they can take
 
-Once the player is in the game, he/she can type message and send out to other players. When the game is 
-started, he/she can use "up" "down" "left" "right" arrow in the keyboard to move the tank (based on the 
-direction this tank towards) and press "space" to shot bullets. Each tank can be shoot at most 3 times. The 4th 
-time been shoot will cause that player died and a prompt will also be shown. He/she can still watch the rest 
-tank fight stream show or he/she can close the web page and join another game. (In advanced version, tank may 
-can eat some gifts to increase bullets number or receive some powerful weapons, this can be done if we have 
-time. If more powerful weapns exist, player can switch weapon by press "enter", a powerful weapon can kill 
-a tank no matter how many they have been shoot by the bullet.)
+  Once the player is in the game, he/she can type message and send to other players.
+  Movement of tanks are controlled by arrow keys, and shoot missiles by hitting the spacebar.
+
+  Players can shoot other tanks or brick walls. But the metal walls are unbreakable.
+
+  Each tank are able take 3 missile hits. So a 4th hit kills the tank and the player operating that tank becomes observer of the game.
+
 
 =================================================================
 How a player can win
 
-Tank can stay behind non-able-destroyed wall to get cover or they can shot to the able-destroyed wall to 
-make more roads to move. Tank needs to shot to other tanks in order to win. If all other tanks have been 
-killed besided your tank, then you win!
-
-
-
+  The last survivor wins!
