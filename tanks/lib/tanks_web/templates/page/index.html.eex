@@ -1,4 +1,8 @@
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Tanks Game" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
+<div class="row">
+  <div class="col">
+    <h2><%= gettext "Welcome to %{name}!", name: "Tanks Game" %></h2>
+    <div id="root">
+      <p>Game loading...</p>
+    </div>
+  </div>
 </div>
