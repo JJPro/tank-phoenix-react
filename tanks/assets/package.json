@@ -1,0 +1,33 @@
+{
+  "repository": {},
+  "license": "MIT",
+  "scripts": {
+    "deploy": "brunch build --production",
+    "watch": "brunch watch --stdin"
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0",
+    "jquery": "^3.3.1",
+    "konva": "^2.0.2",
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "popper.js": "^1.14.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-konva": "^1.7.1",
+    "react-redux": "^5.0.7",
+    "reactstrap": "^5.0.0-alpha.4",
+    "redux": "^3.7.2",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "babel-brunch": "6.1.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "brunch": "2.10.9",
+    "clean-css-brunch": "2.10.0",
+    "redux-devtools": "^3.4.1",
+    "sass-brunch": "^2.10.4",
+    "uglify-js-brunch": "2.10.0"
+  }
+}
