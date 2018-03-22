@@ -12,7 +12,9 @@
   </head>
 
   <body>
+    <div id="masthead-banner"></div>
     <div class="container">
+
 
       <%= if get_flash(@conn, :info) do %>
         <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
