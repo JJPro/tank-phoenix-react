@@ -1,0 +1,23 @@
+<%# login form %>
+<h2 class="text-center">Welcome</h2>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+      <%= form_for @conn, auth_path(@conn, :login, referer: @referer), fn f -> %>
+      <div class="form-group">
+        <%= text_input f, :email, class: "form-control", type: "email", placeholder: "Enter email", required: true %>
+        <%= error_tag f, :email %>
+      </div>
+
+      <div class="form-group">
+        <%= submit "Log In", class: "btn btn-info btn-block" %>
+        <small class="form-text text-muted">
+          Don't have an account?
+          <%= link "Register", to: auth_path(@conn, :register, referer: @referer) %>
+        </small>
+      </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

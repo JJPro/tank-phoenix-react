@@ -1,0 +1,5 @@
+<h2 class="text-center">Welcome</h2>
+
+<%= render TanksWeb.UserView, "form.html", action: user_path(@conn, :create), changeset: @changeset, referer: @referer %>
+
+<p class="text-center"><%= link "Home", to: page_path(@conn, :index) %></p>
