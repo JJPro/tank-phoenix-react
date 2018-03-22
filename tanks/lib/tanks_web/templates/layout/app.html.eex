@@ -12,7 +12,9 @@
   </head>
 
   <body>
-    <div id="masthead-banner"></div>
+    <div id="masthead">
+      <div id="banner-image"></div>
+    </div>
     <div class="container">
 
 
