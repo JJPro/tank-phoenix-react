@@ -15,9 +15,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-konva": "^1.7.1",
-    "react-redux": "^5.0.7",
     "reactstrap": "^5.0.0-alpha.4",
-    "redux": "^3.7.2",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
