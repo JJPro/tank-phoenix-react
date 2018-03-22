@@ -1,8 +1,18 @@
 <div class="row">
-  <div class="col">
-    <h2><%= gettext "Welcome to %{name}!", name: "Tanks Game" %></h2>
-    <div id="root">
-      <p>Game loading...</p>
+  <div class="col text-center">
+    <!-- The input field to create room -->
+    <script type="text/javascript">
+      window.api_game_url = "<%= page_path(@conn, :get_game_status_with_name, "placeholder") %>";
+    </script>
+    <div class="section section-create-room">
+      <div id="create-room-field"></div>
+    </div>
+    <div class="divider"><span>OR</span></div>
+
+
+    <div class="section section-join-others">
+      <h2>Join Others</h2>
+      <%= game_cards_html %>
     </div>
   </div>
 </div>

@@ -19,3 +19,8 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
+
+import create_room_field from './room-create-input';
+
+create_room_field(document.getElementById('create-room-field'));

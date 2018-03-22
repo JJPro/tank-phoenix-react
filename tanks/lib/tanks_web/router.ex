@@ -31,7 +31,8 @@ defmodule TanksWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", TanksWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/v1", TanksWeb do
+    pipe_through :api
+    get "/game_status/:name", PageController, :get_game_status_with_name
+  end
 end
