@@ -55,20 +55,29 @@ defmodule Tanks.Game do
   - update location of missiles
   """
   def next_state(game) do
-    game = handle_collisions(game)
-    %{game | missiles: update_location_of_missiles(game.missiles)}
+    game
+    |> handle_collisions
+    |> update_location_of_missiles
   end
 
-  defp update_location_of_missiles(missiles) do
-    missiles
-    |> Enum.map(fn m ->
-      case m.direction do
-        :up -> %{m: m.y - m.speed}
-        :down -> %{m: m.y + m.speed}
-        :left -> %{m: m.x - m.speed}
-        :right -> %{m: m.x + m.speed}
-      end
-    end )
+  defp update_location_of_missiles(game) do
+    new_missiles = game.missiles
+                    |> Enum.map(
+                      fn m ->
+                        case m.direction do
+                          :up -> %{m: m.y - m.speed}
+                          :down -> %{m: m.y + m.speed}
+                          :left -> %{m: m.x - m.speed}
+                          :right -> %{m: m.x + m.speed}
+                        end
+                      end )
+                    # remove missiles out of view:
+                    |> Enum.filter( fn m -> m.x+m.width >= 0
+                                            && m.x <= game.canvas.width
+                                            && m.y+m.width >= 0
+                                            && m.y <= game.canvas.height
+                                    end )
+    %{game | missiles: new_missiles}
   end
 
   @doc """
