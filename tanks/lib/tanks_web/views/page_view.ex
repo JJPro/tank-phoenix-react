@@ -12,11 +12,11 @@ defmodule TanksWeb.PageView do
 
   def game_cards_html do
     cards_html = Entertainment.list_games
-                 |> Enum.reduce("", fn (game,acc) -> acc <> PageView.game_card_html end)
+                 |> Enum.reduce("", fn (game,acc) -> acc <> game_card_html(game) end)
     raw "<div class='game-cards'>#{cards_html}</div>"
   end
 
-  # TODO: fill in anchor links for joining and observing games. 
+  # TODO: fill in anchor links for joining and observing games.
   def game_card_html(%{status: status} = game) do
     join_button = status == :open && "<a href='' class='btn btn-join'>Join</a>" || ''
     observe_button = (status == :full || status == :in_battle ) && "<a href='' class='btn btn-observe'>Observe</a>" || ''
