@@ -4,13 +4,28 @@ defmodule Tanks.Game do
   """
 
   alias Tanks.{Missile, Tank, Steel, Brick}
-  def new do
+
+  def new(players, width \\ 800, height \\ 800) do
+    tanks = case length(players) do
+      2 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
+            %Tank{x: width-2, y: height-2, orientation: :up, player: Enum.at(players, 1)}]
+      3 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
+            %Tank{x: width-2, y: height-2, orientation: :up, player: Enum.at(players, 1)},
+            %Tank{x: 0, y: height-2, orientation: :right, player: Enum.at(players, 2)},]
+      4 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
+            %Tank{x: width-2, y: height-2, orientation: :up, player: Enum.at(players, 1)},
+            %Tank{x: 0, y: height-2, orientation: :right, player: Enum.at(players, 2)},
+            %Tank{x: width-2, y: 0, orientation: :left, player: Enum.at(players, 3)}, ]
+    end
+
+    map = pick_a_map;
+
     %{
-      canvas: %{x: 0, y: 0},
-      tanks: [],
+      canvas: %{width: width, height: height},
+      tanks: tanks,
       missiles: [],
-      bricks: [],
-      steels: [],
+      bricks: map.bricks,
+      steels: map.steels,
       destroyed_tanks_last_frame: [],
     }
   end
@@ -231,5 +246,16 @@ defmodule Tanks.Game do
                       && tank.y > o.y + tank.height
                       && tank.y < o.y end)
     !edge_block? && !obstacles_block?
+  end
+
+  @doc """
+  Randomly pick a map from predefined set of maps
+  :: %{
+        bricks: list of %Brick{x: xx, y: yy},
+        steels: list of %Steel{x: xx, y: yy}
+     }
+  """
+  defp pick_a_map do
+    %{bricks: [], steels: []}
   end
 end
