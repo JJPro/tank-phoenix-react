@@ -36,7 +36,7 @@ defmodule Tanks.Game do
   - update coordinates moving in orientation direction for 1 unit
   -
   """
-  def move(game, player, direction) do
+  def operate(game, player, direction) do
   end
 
   @doc """
@@ -55,7 +55,19 @@ defmodule Tanks.Game do
   - update location of missiles
   """
   def next_state(game) do
+    game = handle_collisions(game)
+    %{game | missiles: update_location_of_missiles(game.missiles)}
+  end
 
+  defp update_location_of_missiles(missiles) do
+    missiles
+    |> Enum.map(fn m -> case m.direction do
+        :up -> %{m: m.y - m.speed}
+        :down -> %{m: m.y + m.speed}
+        :left -> %{m: m.x - m.speed}
+        :right -> %{m: m.x + m.speed}
+      end
+    end )
   end
 
   @doc """
@@ -111,7 +123,6 @@ defmodule Tanks.Game do
   :: %{missiles: tanks, hit?: boolean}
   """
   defp handle_collision_missiles(missile, missiles) do
-    # todo: avoid comparing with itself.
     new_missiles = missiles
     |> Enum.filter(fn m -> !collide?(missile, m) || missile.direction != m.direction end)
 
