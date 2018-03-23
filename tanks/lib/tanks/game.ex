@@ -150,44 +150,29 @@ defmodule Tanks.Game do
 
   """
   defp handle_collisions(game) do
-    game.missiles |> Enum.reduce(game, fn (m, game) ->
+    game = game.missiles |> Enum.reduce(game, fn (m, game) ->
       cond do
         hit?(m, game.bricks) ->
-          new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
-          new_bricks = Enum.reject(game.bricks, fn b -> collide?(b, m) end)
-
-          %{game | missiles: new_missiles, bricks: new_bricks}
-
+            new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
+            new_bricks = Enum.reject(game.bricks, fn b -> collide?(b, m) end)
+            %{game | missiles: new_missiles, bricks: new_bricks}
         hit?(m, game.tanks) ->
-          new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
-          # decrease tank hp, and delete and add to destroyed_list if new hp = 0
-          new_tanks = game.tanks
-          |> Enum.map(fn t ->
-            if collide?(t,m) do
-              if t.hp > 1 do  # decrease tank hp
-                %Tank{t | hp: t.hp-1}
-              else  # mark for delete via nil; add to destroyed list
-                game = %{game | destroyed_tanks_last_frame: [t | game.destroyed_tanks_last_frame]}
-                nil
-              end
-            else
-              t
-            end
-           end)
-          |> Enum.reject(fn t -> is_nil(t) end)
-          %{game | missiles: new_missiles, tanks: new_tanks}
-
+            new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
+            # decrease tank hp, and delete and add to destroyed_list if new hp = 0
+            new_tanks = game.tanks
+            |> Enum.map(fn t -> if collide?(t,m), do: %Tank{t | hp: t.hp-1}, else: t end) # decrease tank hp
+            %{game | missiles: new_missiles, tanks: new_tanks}
         hit?(m, game.missiles) ->
-          new_missiles = Enum.reject(game.missiles, fn mm -> collide?(mm, m) end)
-
-          %{game | missiles: new_missiles}
-
-
+            new_missiles = Enum.reject(game.missiles, fn mm -> collide?(mm, m) end)
+            %{game | missiles: new_missiles}
         true -> game # no collision with this missile detected
       end
-
-
     end)
+
+    # filter out destroyed tanks
+    destroyed_tanks = Enum.filter(game.tanks, fn t -> t.hp == 0 end)
+    %{game | tanks: game.tanks -- destroyed_tanks, # remove destroyed tanks from the list
+             destroyed_tanks_last_frame: destroyed_tanks}
   end
 
   @doc """
