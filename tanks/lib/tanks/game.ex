@@ -61,7 +61,8 @@ defmodule Tanks.Game do
 
   defp update_location_of_missiles(missiles) do
     missiles
-    |> Enum.map(fn m -> case m.direction do
+    |> Enum.map(fn m ->
+      case m.direction do
         :up -> %{m: m.y - m.speed}
         :down -> %{m: m.y + m.speed}
         :left -> %{m: m.x - m.speed}
@@ -89,7 +90,7 @@ defmodule Tanks.Game do
       %{missiles: missiles, hit?: missiles_hit?} = handle_collision_missiles(missile, game.missiles)
       %{bricks: bricks, hit?: bricks_hit?} = handle_collision_bricks(missile, game.bricks)
       missiles = if tanks_hit? || missiles_hit? || bricks_hit?,
-                  do: Enum.filter(missiles, fn m -> m == missile end),
+                  do: Enum.filter(missiles, fn m -> m != missile end),
                   else: missiles
       %{game | tanks: tanks,
                missiles: missiles,
