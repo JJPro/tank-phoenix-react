@@ -24,8 +24,13 @@ class List extends Component {
   componentDidMount(){
     // TODO: should I put this in constructor?
     this.channel.on("rooms_status_updated", (data) => {
-      console.log(data);
-      this.setState({rooms: data.rooms});
+      console.log("rooms updated", data);
+      // this.setState({rooms: data.rooms});
+    });
+
+    // test cross socket communication
+    this.channel.on("update_room", (data) => {
+      console.log('room updated', data);
     });
   }
 

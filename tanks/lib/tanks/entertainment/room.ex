@@ -37,7 +37,10 @@ defmodule Tanks.Entertainment.Room do
     end
   end
 
-  def make_ready(room, user) do
+  def player_ready(room, user) do
+    # IO.puts ".>>> player_ready"
+    # IO.inspect room
+    # IO.inspect user
     %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: true} || p) end)}

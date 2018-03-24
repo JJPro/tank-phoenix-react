@@ -1,0 +1,4 @@
+<div id="room"></div>
+<script type="text/javascript">
+  window.room_name = "<%= @name %>";
+</script>

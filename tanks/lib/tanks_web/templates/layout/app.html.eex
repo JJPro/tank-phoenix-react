@@ -13,6 +13,25 @@
 
   <body>
     <div id="masthead">
+      <nav>
+        <ul class="nav nav-pills">
+          <%= if @current_user do %>
+            <script type="text/javascript">
+              window.user = <%= @current_user.id %>;
+            </script>
+            <li>
+              Logged in as: <%= link raw(@current_user.name), to: user_path(@conn, :show, @current_user.id), class: "btn btn-info" %>
+            </li>
+            <li>
+              <%= link "Logout", to: auth_path(@conn, :logout), method: :delete, class: "btn btn-light" %>
+            </li>
+          <% else %>
+            <li>
+              <%= link "Sign in", to: auth_path(@conn, :index), class: "btn btn-light" %>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
       <div id="banner-image"></div>
     </div>
     <div class="container">

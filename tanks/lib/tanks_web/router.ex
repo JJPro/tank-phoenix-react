@@ -28,6 +28,7 @@ defmodule TanksWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+    get "/room/:name", RoomController, :show
   end
 
   # Other scopes may use custom stacks.
