@@ -2,7 +2,9 @@ defmodule TanksWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", TanksWeb.RoomChannel
+  channel "list_rooms", TanksWeb.ListRoomsChannel
+  channel "game:*", TanksWeb.GameChannel
+  channel "room:*", TanksWeb.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

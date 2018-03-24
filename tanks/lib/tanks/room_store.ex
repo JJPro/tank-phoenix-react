@@ -1,13 +1,13 @@
-defmodule Tanks.GameBackup do
+defmodule Tanks.RoomStore do
   use Agent
 
   def start_link do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
   end
 
-  def save(name, game) do
+  def save(name, room) do
     Agent.update __MODULE__, fn state ->
-      Map.put(state, name, game)
+      Map.put(state, name, room)
     end
   end
 
@@ -17,9 +17,14 @@ defmodule Tanks.GameBackup do
     end
   end
 
+  @doc """
+  list all room.
+  :: [%{name: , room: }]
+  """
   def list do
     Agent.get __MODULE__, fn state ->
-      Map.keys(state)
+      state
+      |> Enum.map(fn {name, room} -> %{name: name, room: room} end)
     end
   end
 end

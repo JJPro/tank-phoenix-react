@@ -1,6 +1,6 @@
 defmodule TanksWeb.PageController do
   use TanksWeb, :controller
-  alias Tanks.Game
+  alias Tanks.Entertainment.{Room, Game}
 
   def index(conn, _params) do
     render conn, "index.html"
@@ -9,18 +9,16 @@ defmodule TanksWeb.PageController do
   @doc """
   ajax response funtion
   """
-  def get_game_status_with_name(conn, %{"name" => game_name}) do
-    statuses = %{full: "full", inbattle: "in battle", open: "open", non_exist: ""}
-
-    game = Tanks.GameBackup.load(game_name)
+  def get_room_status(conn, %{"name" => name}) do
+    room = Tanks.RoomStore.load(name)
     # IO.puts ">>>>>>> getting game"
     # IO.inspect game;
-    game_status = game && game.status || statuses.non_exist
+    room_status = if room, do: Room.get_status(room), else: nil
 
-    render(conn, "show.json", game_status: game_status)
+    render(conn, "show.json", room_status: room_status)
 
     # sample response for testing
-    # render(conn, "show.json", game_status: statuses.full)
+    # render(conn, "show.json", room_status: statuses.full)
 
   end
 

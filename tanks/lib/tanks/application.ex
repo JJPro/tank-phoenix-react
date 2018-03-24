@@ -14,7 +14,7 @@ defmodule Tanks.Application do
       supervisor(TanksWeb.Endpoint, []),
       # Start your own worker by calling: Tanks.Worker.start_link(arg1, arg2, arg3)
       # worker(Tanks.Worker, [arg1, arg2, arg3]),
-      worker(Tanks.GameBackup, []),
+      worker(Tanks.RoomStore, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

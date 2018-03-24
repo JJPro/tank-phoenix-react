@@ -2,7 +2,7 @@
   <div class="col text-center">
     <!-- The input field to create room -->
     <script type="text/javascript">
-      window.api_game_url = "<%= page_path(@conn, :get_game_status_with_name, "placeholder") %>";
+      window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
     </script>
     <div class="section section-create-room">
       <div id="create-room-field"></div>
@@ -12,7 +12,7 @@
 
     <div class="section section-join-others">
       <h2>Join Others</h2>
-      <%= game_cards_html %>
+      <div id="rooms-list"></div>
     </div>
   </div>
 </div>

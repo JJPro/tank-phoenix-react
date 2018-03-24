@@ -18,9 +18,12 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-// import socket from "./socket"
+import socket from "./socket"
 
 
 import create_room_field from './room-create-input';
-
 create_room_field(document.getElementById('create-room-field'));
+
+
+import list from './list-rooms';
+list(document.getElementById('rooms-list'));

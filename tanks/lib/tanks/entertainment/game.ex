@@ -1,9 +1,9 @@
-defmodule Tanks.Game do
+defmodule Tanks.Entertainment.Game do
   @moduledoc """
   manage game state
   """
 
-  alias Tanks.{Missile, Tank, Steel, Brick}
+  alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick}
 
   def new(players, width \\ 800, height \\ 800) do
     tanks = case length(players) do

@@ -14,7 +14,7 @@ class Input extends Component {
 
     this.state = {
       term: "",
-      game_status: STATUS_NOT_EXIST,
+      room_status: STATUS_NOT_EXIST,
     }
   }
 
@@ -27,16 +27,12 @@ class Input extends Component {
     if (term.trim() != ""){
 
       let url = window.api_game_url.replace('placeholder', term);
-      $.ajax(url, {
-        method: "get",
-        dataType: "json",
-        contentType: "application/json; charset=UTF-8",
-        success: (resp) => {
-          console.log(resp);
-          // set new state with response
-          this.setState({game_status: resp.data.game_status});
-        }
-      });
+      fetch(url)
+        .then((resp) => resp.json())
+        .then((json) => {
+          console.log(json.data);
+          this.setState({room_status: json.data.room_status});
+        });
     }
 
 
@@ -58,11 +54,11 @@ class Input extends Component {
     let buttons;
 
     if (this.state.term.trim() == "") buttons = '';
-    else if (this.state.game_status == STATUS_FULL || this.state.game_status == STATUS_INBATTLE) {
+    else if (this.state.room_status == STATUS_FULL || this.state.room_status == STATUS_INBATTLE) {
       buttons = <div className="input-group-append">
                   <button className="btn btn-outline-secondary" type="button" onClick={this.observeGame.bind(this)}>Observe</button>
                 </div>;
-    } else if (this.state.game_status == STATUS_OPEN) {
+    } else if (this.state.room_status == STATUS_OPEN) {
       buttons = <div className="input-group-append">
                   <button className="btn btn-outline-secondary" type="button" onClick={this.joinGame.bind(this)}>Join</button>
                   <button className="btn btn-outline-secondary" type="button" onClick={this.observeGame.bind(this)}>Observe</button>
