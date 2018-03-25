@@ -128,7 +128,7 @@ function Player({player, owner, onKickout, index}){
   let owner_class = player.is_owner ? "room-owner" : '';
   let name = player.id == window.user ? "YOU" : player.name;
   let kickout_button = (window.user == owner.id && player.id != owner.id)
-                        ? <button className="btn btn-outline-danger" onClick={onKickout(player.id)}></button>
+                        ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
   let tank_thumbnails = ['url("/images/tank-cyan.png")',
                          'url("/images/tank-red.png")',
