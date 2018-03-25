@@ -19,6 +19,8 @@ class List extends Component {
     this.channel.join()
         .receive("ok", (data) => this.state.rooms = data.rooms )
         .receive("error", resp => { console.log("Unable to join", resp) });
+
+    console.log(this.state.rooms);
   }
 
   componentDidMount(){

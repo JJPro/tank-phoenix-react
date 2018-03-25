@@ -4,7 +4,7 @@ defmodule TanksWeb.RoomChannel do
   alias Tanks.Accounts
   alias Phoenix.PubSub
 
-  def join("room:" <> name, payload, socket) do
+  def join("room:" <> name, %{"uid" => uid} = payload, socket) do
     # IO.puts ">>>>>>>> join: room"
     # IO.puts ">>>>>>> payload: "
     # IO.inspect payload
@@ -12,7 +12,15 @@ defmodule TanksWeb.RoomChannel do
     if authorized?(payload) do
       # create or restore room
       # return room to client
-      room = Tanks.RoomStore.load(name) || Room.new(name, Accounts.get_user!(payload["uid"]))
+      room = if room = Tanks.RoomStore.load(name) do
+        room
+      else
+        # broadcast to home page viewers about new room
+        TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: :open}})
+
+        Room.new(name, Accounts.get_user!(uid))
+      end
+
       socket = socket
       |> assign(:name, name)
       |> assign(:room, room)
