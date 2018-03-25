@@ -241,6 +241,6 @@ defmodule Tanks.Entertainment.Game do
      }
   """
   defp pick_a_map do
-    random_a_game_map()
+    Map.random_a_game_map()
   end
 end
