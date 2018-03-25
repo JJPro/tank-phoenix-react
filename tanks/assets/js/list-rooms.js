@@ -17,29 +17,39 @@ class List extends Component {
     };
 
     this.channel.join()
-        .receive("ok", (data) => this.state.rooms = data.rooms )
+        .receive("ok", (data) => {
+          console.log("join", data)
+          this.setState({rooms: data.rooms});
+        })
+        // .receive("ok", (data) => this.state.rooms = data.rooms )
         .receive("error", resp => { console.log("Unable to join", resp) });
   }
 
   componentDidMount(){
     // TODO: should I put this in constructor?
     this.channel.on("rooms_status_updated", (data) => {
-      console.log(data);
-      this.setState({rooms: data.rooms});
+      console.log("rooms updated", data);
+      // this.setState({rooms: data.rooms});
+    });
+
+    // test cross socket communication
+    this.channel.on("update_room", (data) => {
+      console.log('room updated', data);
     });
   }
 
   render() {
-
+    console.log("render", this.state.rooms);
     return (
       <div className='room-cards'>
-        {this.state.rooms.map( (r) => <Room room={r} /> )}
+        {this.state.rooms.map( (r) => <Room room={r} key={r.name} /> )}
       </div>
     );
   }
 }
 
 function Room(props) {
+  // console.log("props", props);
   let join_button = '', observe_button = '';
   observe_button = <a href='' className='btn btn-observe'>Observe</a>;
   if (props.room.status == "open") {

@@ -1,5 +1,7 @@
 defmodule Tanks.Entertainment.Room do
 
+  alias Tanks.Entertainment.Game
+
   def new(name, user) do
     %{
       name: name,
@@ -37,13 +39,16 @@ defmodule Tanks.Entertainment.Room do
     end
   end
 
-  def make_ready(room, user) do
+  def player_ready(room, user) do
+    # IO.puts ".>>> player_ready"
+    # IO.inspect room
+    # IO.inspect user
     %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: true} || p) end)}
   end
 
-  def cancel_ready(room, user) do
+  def player_cancel_ready(room, user) do
     %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: false} || p) end)}
@@ -57,12 +62,20 @@ defmodule Tanks.Entertainment.Room do
 
   end
 
+  def start_game(room) do
+    %{room | game: Game.new(room.players)}
+  end
+
+  def end_game(room) do
+    %{room | game: nil}
+  end
+
   @doc """
   :: :open | :full | :playing
   """
   def get_status(room) do
     cond do
-      is_nil(room.game) -> :playing
+      room.game -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end
