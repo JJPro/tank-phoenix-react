@@ -75,7 +75,7 @@ defmodule Tanks.Entertainment.Room do
   """
   def get_status(room) do
     cond do
-      is_nil(room.game) -> :playing
+      room.game -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end

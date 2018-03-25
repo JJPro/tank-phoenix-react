@@ -1,6 +1,7 @@
 defmodule TanksWeb.RoomChannel do
   use TanksWeb, :channel
   alias Tanks.Entertainment.{Room, Game}
+  alias Tanks.RoomStore
   alias Tanks.Accounts
   alias Phoenix.PubSub
 
@@ -12,13 +13,20 @@ defmodule TanksWeb.RoomChannel do
     if authorized?(payload) do
       # create or restore room
       # return room to client
-      room = if room = Tanks.RoomStore.load(name) do
+
+      IO.puts "<<<<<<<<<<<< joining room"
+      IO.inspect RoomStore.load(name)
+      room = if room = RoomStore.load(name) do
+        IO.puts ">>>>>>>> room exists"
         room
       else
+        # IO.puts ">>>>>> room doesnt exist"
         # broadcast to home page viewers about new room
         TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: :open}})
 
-        Room.new(name, Accounts.get_user!(uid))
+        room = Room.new(name, Accounts.get_user!(uid))
+        RoomStore.save(name, room)
+        room
       end
 
       socket = socket
@@ -39,7 +47,7 @@ defmodule TanksWeb.RoomChannel do
 
     user = Accounts.get_user!(uid)
     room = Room.player_ready(socket.assigns.room, user)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
 
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
@@ -50,7 +58,7 @@ defmodule TanksWeb.RoomChannel do
   def handle_in("cancel", %{"uid" => uid}, socket) do
     user = Accounts.get_user!(uid)
     room = Room.player_cancel_ready(socket.assigns.room, user)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
 
@@ -60,7 +68,7 @@ defmodule TanksWeb.RoomChannel do
   def handle_in("enter", %{"uid" => uid}, socket) do
     user = Accounts.get_user!(uid)
     room = Room.add_player(socket.assigns.room, user)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
 
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
@@ -74,7 +82,7 @@ defmodule TanksWeb.RoomChannel do
   def handle_in("leave", %{"uid" => uid}, socket) do
     user = Accounts.get_user!(uid)
     room = Room.remove_player(socket.assigns.room, user)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
 
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
@@ -90,7 +98,7 @@ defmodule TanksWeb.RoomChannel do
 
   def handle_in("start", payload, socket) do
     room = Room.start_game(socket.assigns.room)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
     # broadcast to home page viewers (list_rooms_channel.ex)
@@ -101,7 +109,7 @@ defmodule TanksWeb.RoomChannel do
 
   def handle_in("end", payload, socket) do
     room = Room.end_game(socket.assigns.room)
-    Tanks.RoomStore.save(room.name, room)
+    RoomStore.save(room.name, room)
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
     # broadcast to home page viewers (list_rooms_channel.ex)
