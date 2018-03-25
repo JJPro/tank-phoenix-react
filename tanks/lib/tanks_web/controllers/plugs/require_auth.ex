@@ -15,7 +15,7 @@ defmodule TanksWeb.Plugs.RequireAuth do
       conn
     else
       conn
-      # |> put_flash(:error, "Please log in.")
+      |> put_flash(:error, "Login is Required!")
       |> redirect(to: auth_path(conn, :index))
       |> halt()
     end

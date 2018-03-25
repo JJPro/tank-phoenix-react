@@ -38,11 +38,11 @@
 
 
       <%= if get_flash(@conn, :info) do %>
-        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <p class="alert alert-info text-center" role="alert"><%= get_flash(@conn, :info) %></p>
       <% end %>
 
       <%= if get_flash(@conn, :error) do %>
-        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+        <p class="alert alert-danger text-center" role="alert"><%= get_flash(@conn, :error) %></p>
       <% end %>
 
       <main role="main">

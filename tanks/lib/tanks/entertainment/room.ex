@@ -6,7 +6,6 @@ defmodule Tanks.Entertainment.Room do
     %{
       name: name,
       players: [%{user: user, ready?: false, owner?: true}],
-      observers: [],
       game: nil,
     }
   end
@@ -18,7 +17,7 @@ defmodule Tanks.Entertainment.Room do
   @doc """
   :: {:ok, room} | {:error, nil}
   3 scenarios:
-    1. last player: destroy room
+    1. last player: destroy room, return {:error, nil}
     2. owner & other players in the room: shift owner to first player in line
     3. non-owner: delete element
   """
@@ -54,16 +53,18 @@ defmodule Tanks.Entertainment.Room do
                         fn p -> (p.user == user && %{p | ready?: false} || p) end)}
   end
 
-  def add_observer(room, user) do
-
-  end
-
-  def remove_observer(room, user) do
-
-  end
-
+  @doc """
+  :: {:ok, %{room: room}} | {:error, %{reason: string}}
+  """
   def start_game(room) do
-    %{room | game: Game.new(room.players)}
+    cond do
+      length(room.players) < 2 ->
+        {:error, %{reason: 'not enough players'}}
+      Enum.any?(room.players, fn(p) -> not p.ready? end) ->
+        {:error, %{reason: 'players are not ready'}}
+      true ->
+        {:ok, %{room | game: Game.new(room.players)} }
+    end
   end
 
   def end_game(room) do
