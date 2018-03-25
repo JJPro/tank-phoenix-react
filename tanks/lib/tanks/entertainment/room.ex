@@ -11,7 +11,11 @@ defmodule Tanks.Entertainment.Room do
   end
 
   def add_player(room, user) do
-    %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+    if get_player_from_user(room, user) do
+      room
+    else
+      %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+    end
   end
 
   @doc """
@@ -39,12 +43,17 @@ defmodule Tanks.Entertainment.Room do
   end
 
   def player_ready(room, user) do
-    # IO.puts ".>>> player_ready"
-    # IO.inspect room
+    # IO.puts ">>>> player_ready"
     # IO.inspect user
-    %{room | players: Enum.map(
+    # IO.puts "********** Before"
+    # IO.inspect room
+
+
+    room = %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: true} || p) end)}
+    # IO.puts "*********** After"
+    # IO.inspect room
   end
 
   def player_cancel_ready(room, user) do

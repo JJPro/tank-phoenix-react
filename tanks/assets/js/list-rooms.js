@@ -18,13 +18,13 @@ class List extends Component {
 
     this.channel.join()
         .receive("ok", (data) => {
-          console.log("join", data)
+          // console.log("join", data)
           this.setState({rooms: data.rooms});
         })
         // .receive("ok", (data) => this.state.rooms = data.rooms )
         .receive("error", resp => { console.log("Unable to join", resp) });
     this.channel.on("rooms_status_updated", (data) => {
-      console.log("rooms updated", data);
+      // console.log("rooms updated", data);
       let rooms;
       if (data.room.status == "deleted")
         rooms = this.state.rooms.filter( (r) => data.room.name != r.name );
@@ -47,7 +47,7 @@ class List extends Component {
   }
 
   render() {
-    console.log("render", this.state.rooms);
+    // console.log("render", this.state.rooms);
     return (
       <div className='room-cards d-flex justify-content-center flex-wrap'>
         {this.state.rooms.map( (r) => <Room room={r} key={r.name} /> )}
@@ -57,7 +57,7 @@ class List extends Component {
 }
 
 function Room({room}) {
-  console.log("props", room);
+  // console.log("props", room);
   let join_button = '', observe_button = '';
   observe_button = <a href={room_url.replace('placeholder', room.name)} className='btn btn-block btn-info btn-small btn-observe'>Observe</a>;
   if (room.status == "open") {

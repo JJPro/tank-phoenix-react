@@ -65,7 +65,7 @@ class Room extends Component {
       <div className="text-center p-3">
         <h1>Room: {name}</h1>
         <div className="players d-flex justify-content-center flex-wrap">
-          {players.map( (p, index) => <Player player={p} owner={owner} key={p.id} index={index} onKickout={this.onKickout.bind(this)} /> )}
+          {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
         </div>
         <div className="d-flex justify-content-center flex-wrap p-3">
           {button_ready_cancel}
@@ -83,25 +83,42 @@ class Room extends Component {
 
     if ( window.location.search.includes('join') ){
       this.channel.push("enter", {uid: window.user})
-          .receive("ok", resp => {
-            console.log("join success:", resp);
-          })
-          .receive("error", ({reason}) => {
-            console.log("enter error:", reason);
-            alert("Unable to Join: " + reason);
+        .receive("ok", resp => {
+          console.log("join success:", resp);
+        })
+        .receive("error", ({reason}) => {
+          console.log("enter error:", reason);
+          alert("Unable to Join: " + reason);
 
+        }
+      );
+
+      this.channel.push("info", {when: "after enter"})
+          .receive("ok", data => {
+            console.log("info after enter", data);
           });
     }
 
     this.channel.on("update_room", data => {
-      console.log("update room", data);
+      // console.log("update room", data);
+      this.channel.push("info", {when: "room updated"})
+          .receive("ok", data => {
+            console.log("info room updated", data);
+          });
       this.gotView(data);
     });
   }
 
   onReady(){
+    this.channel.push("info", {when: "before ready"})
+        .receive("ok", data => {
+          console.log("info before ready", data);
+        });
     this.channel.push("ready", {uid: window.user});
-  }
+    this.channel.push("info", {when: "after ready"})
+        .receive("ok", data => {
+          console.log("info after ready", data);
+        });  }
 
   onCancel(){
     this.channel.push("cancel", {uid: window.user});
@@ -128,7 +145,7 @@ function Player({player, owner, onKickout, index}){
   let owner_class = player.is_owner ? "room-owner" : '';
   let name = player.id == window.user ? "YOU" : player.name;
   let kickout_button = (window.user == owner.id && player.id != owner.id)
-                        ? <button className="btn btn-outline-danger" onClick={onKickout(player.id)}></button>
+                        ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
   let tank_thumbnails = ['url("/images/tank-cyan.png")',
                          'url("/images/tank-red.png")',
