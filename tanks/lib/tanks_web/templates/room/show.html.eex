@@ -1,0 +1,6 @@
+<div id="room"></div>
+<script type="text/javascript">
+  window.room_name = "<%= @name %>";
+  window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
+  window.room_exists = <%= Tanks.RoomStore.load(@name) != nil %>;
+</script>

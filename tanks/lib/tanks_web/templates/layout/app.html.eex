@@ -13,17 +13,36 @@
 
   <body>
     <div id="masthead">
+      <nav>
+        <ul class="nav nav-pills">
+          <%= if @current_user do %>
+            <script type="text/javascript">
+              window.user = <%= @current_user.id %>;
+            </script>
+            <li>
+              Logged in as: <%= link raw(@current_user.name), to: user_path(@conn, :show, @current_user.id), class: "btn btn-info" %>
+            </li>
+            <li>
+              <%= link "Logout", to: auth_path(@conn, :logout), method: :delete, class: "btn btn-light" %>
+            </li>
+          <% else %>
+            <li>
+              <%= link "Sign in", to: auth_path(@conn, :index), class: "btn btn-light" %>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
       <div id="banner-image"></div>
     </div>
     <div class="container">
 
 
       <%= if get_flash(@conn, :info) do %>
-        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <p class="alert alert-info text-center" role="alert"><%= get_flash(@conn, :info) %></p>
       <% end %>
 
       <%= if get_flash(@conn, :error) do %>
-        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+        <p class="alert alert-danger text-center" role="alert"><%= get_flash(@conn, :error) %></p>
       <% end %>
 
       <main role="main">

@@ -7,7 +7,7 @@
 #create-room-field{margin: 1.5em 0;}
 .divider { display: flex; align-items: center; margin: 20px 0; justify-content: center;
   // .divider-line{position: absolute; width: 100%; height: 0; border: lightgray solid 0.5px; }
-  span { background: white; padding: 5px; font-weight: bold; color: gray; 
+  span { background: white; padding: 5px; font-weight: bold; color: gray;
     &::before{content: ""; left: 0; position: absolute; width: 100%; height: 0; border: lightgray solid 0.5px;
       transform: translateY(12px); z-index:-1;}
   }
@@ -16,5 +16,15 @@
 .section{
   &.section-join-others{
     h2 {font-size: 1.5em; color: lighten(black, 35%);}
+  }
+}
+
+#rooms-list {
+  .room-cards {
+    .room-card { border-radius: 1em; margin: 20px; width: 10em;
+      &.status-open {background: rgba(154, 199, 253, 1);}
+      &.status-playing {background: #adecb7;}
+      &.status-full {background: #ffe383;}
+    }
   }
 }

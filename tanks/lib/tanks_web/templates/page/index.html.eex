@@ -3,6 +3,7 @@
     <!-- The input field to create room -->
     <script type="text/javascript">
       window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
+      window.room_url = "<%= room_path(@conn, :show, "placeholder") %>";
     </script>
     <div class="section section-create-room">
       <div id="create-room-field"></div>

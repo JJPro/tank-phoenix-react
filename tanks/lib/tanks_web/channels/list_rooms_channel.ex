@@ -17,11 +17,12 @@ defmodule TanksWeb.ListRoomsChannel do
       # get status of all rooms
       # return %{name: , status: }
 
+      # IO.inspect Tanks.RoomStore.list
       rooms =
         Tanks.RoomStore.list # get all rooms [%{name:, room:}]
         |> Enum.map(fn %{name: name, room: room} ->
           %{name: name, status: Room.get_status(room)} end)
-
+      IO.inspect rooms
       {:ok, %{rooms: rooms}, socket}
     else
       {:error, %{reason: "unauthorized"}}
