@@ -34,6 +34,6 @@ defmodule TanksWeb.Router do
   # Other scopes may use custom stacks.
   scope "/api/v1", TanksWeb do
     pipe_through :api
-    get "/room_status/:room", PageController, :get_room_status
+    get "/room_status/:name", PageController, :get_room_status
   end
 end
