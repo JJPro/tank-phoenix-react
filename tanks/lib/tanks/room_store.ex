@@ -17,6 +17,12 @@ defmodule Tanks.RoomStore do
     end
   end
 
+  def delete(name) do
+    Agent.update __MODULE__, fn state ->
+      Map.delete(state, name)
+    end
+  end
+
   @doc """
   list all room.
   :: [%{name: , room: }]
