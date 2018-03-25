@@ -5,9 +5,9 @@ defmodule TanksWeb.RoomChannel do
   alias Phoenix.PubSub
 
   def join("room:" <> name, payload, socket) do
-    IO.puts ">>>>>>>> join: room"
-    IO.puts ">>>>>>> payload: "
-    IO.inspect payload
+    # IO.puts ">>>>>>>> join: room"
+    # IO.puts ">>>>>>> payload: "
+    # IO.inspect payload
 
     if authorized?(payload) do
       # create or restore room
@@ -30,37 +30,75 @@ defmodule TanksWeb.RoomChannel do
     # IO.inspect socket.assigns.room
 
     user = Accounts.get_user!(uid)
-    # IO.puts ">>>>>user"
     room = Room.player_ready(socket.assigns.room, user)
-    # IO.puts ">>>>>room"
     Tanks.RoomStore.save(room.name, room)
+
+    # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
-    IO.puts "+++++++++ socket"
-    IO.inspect socket
-    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{})
+
     {:noreply, socket}
   end
 
-  def handle_in("cancel", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+  def handle_in("cancel", %{"uid" => uid}, socket) do
+    user = Accounts.get_user!(uid)
+    room = Room.player_cancel_ready(socket.assigns.room, user)
+    Tanks.RoomStore.save(room.name, room)
+    # broadcast change to all players and observers
+    broadcast socket, "update_room", %{room: room_data(room)}
+
+    {:noreply, socket}
   end
 
-  def handle_in("leave", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+  def handle_in("enter", %{"uid" => uid}, socket) do
+    user = Accounts.get_user!(uid)
+    room = Room.add_player(socket.assigns.room, user)
+    Tanks.RoomStore.save(room.name, room)
+
+    # broadcast change to all players and observers
+    broadcast socket, "update_room", %{room: room_data(room)}
+    # broadcast to home page viewers (list_rooms_channel.ex)
+    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: room.name, status: Room.get_status(room)}})
+
+    {:noreply, socket}
   end
 
-  def handle_in("kickout", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+
+  def handle_in("leave", %{"uid" => uid}, socket) do
+    user = Accounts.get_user!(uid)
+    room = Room.remove_player(socket.assigns.room, user)
+    Tanks.RoomStore.save(room.name, room)
+
+    # broadcast change to all players and observers
+    broadcast socket, "update_room", %{room: room_data(room)}
+    # broadcast to home page viewers (list_rooms_channel.ex)
+    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: room.name, status: Room.get_status(room)}})
+
+    {:noreply, socket}
+  end
+
+  def handle_in("kickout", %{"uid" => uid} = payload, socket) do
+    handle_in("leave", payload, socket)
   end
 
   def handle_in("start", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+    room = Room.start_game(socket.assigns.room)
+    Tanks.RoomStore.save(room.name, room)
+    # broadcast change to all players and observers
+    broadcast socket, "update_room", %{room: room_data(room)}
+    # broadcast to home page viewers (list_rooms_channel.ex)
+    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: room.name, status: Room.get_status(room)}})
+
+    {:noreply, socket}
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (room:lobby).
-  def handle_in("shout", payload, socket) do
-    broadcast socket, "shout", payload
+  def handle_in("end", payload, socket) do
+    room = Room.end_game(socket.assigns.room)
+    Tanks.RoomStore.save(room.name, room)
+    # broadcast change to all players and observers
+    broadcast socket, "update_room", %{room: room_data(room)}
+    # broadcast to home page viewers (list_rooms_channel.ex)
+    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: room.name, status: Room.get_status(room)}})
+
     {:noreply, socket}
   end
 
@@ -87,8 +125,8 @@ defmodule TanksWeb.RoomChannel do
   format room object to json format
   """
   defp room_data(room) do
-    IO.puts '+++++++++++'
-    IO.inspect room
+    # IO.puts '+++++++++++'
+    # IO.inspect room
 
     %{
       room | players: Enum.map(room.players, fn p -> player_data(p) end)
