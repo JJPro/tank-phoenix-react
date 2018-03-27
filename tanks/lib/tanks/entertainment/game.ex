@@ -5,6 +5,9 @@ defmodule Tanks.Entertainment.Game do
 
   alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick, Map}
 
+  @doc """
+  Player is same as in room
+  """
   def new(players, width \\ 26, height \\ 26) do
     tanks = case length(players) do
       2 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
@@ -87,7 +90,10 @@ defmodule Tanks.Entertainment.Game do
       [missile | game.missiles]
   """
   def fire(game, player) do
+    # IO.inspect %{event: "fireing", game: game, player: player}
     tank = game.tanks |> Enum.find(fn t -> t.player == player end)
+    IO.inspect %{event: "fireing", tank: tank}
+
     missile = case tank.orientation do
       :up -> %Missile{x: tank.x + tank.width/2, y: tank.y, direction: :up}
       :right -> %Missile{x: tank.x + tank.width, y: tank.y+tank.height/2, direction: :right}
@@ -118,8 +124,12 @@ defmodule Tanks.Entertainment.Game do
     |> update_location_of_missiles
   end
 
-  def get_player_from_uid(uid) do
-    Tanks.Accounts.get_user!(uid)
+  def get_player_from_uid(game, uid) do
+    user = Tanks.Accounts.get_user!(uid)
+    game.tanks
+    |> Enum.map(fn(t) -> t.player end)
+    |> Enum.find(fn player -> player.user == user end)
+
   end
 
   defp update_location_of_missiles(game) do
@@ -127,17 +137,17 @@ defmodule Tanks.Entertainment.Game do
                     |> Enum.map(
                       fn m ->
                         case m.direction do
-                          :up -> %{m: m.y - m.speed}
-                          :down -> %{m: m.y + m.speed}
-                          :left -> %{m: m.x - m.speed}
-                          :right -> %{m: m.x + m.speed}
+                          :up -> %{m | m: m.y - m.speed}
+                          :down -> %{m | m: m.y + m.speed}
+                          :left -> %{m | m: m.x - m.speed}
+                          :right -> %{m | m: m.x + m.speed}
                         end
                       end )
                     # remove missiles out of view:
-                    |> Enum.filter( fn m -> m.x+m.width >= 0
-                                            && m.x <= game.canvas.width
-                                            && m.y+m.width >= 0
-                                            && m.y <= game.canvas.height
+                    |> Enum.filter( fn m -> m.x+m.width >= 0 &&
+                                            m.x <= game.canvas.width &&
+                                            m.y+m.width >= 0 &&
+                                            m.y <= game.canvas.height
                                     end )
     %{game | missiles: new_missiles}
   end
@@ -163,11 +173,11 @@ defmodule Tanks.Entertainment.Game do
             new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
             new_bricks = Enum.reject(game.bricks, fn b -> collide?(b, m) end)
             %{game | missiles: new_missiles, bricks: new_bricks}
-        hit?(m, game.tanks) ->
+        hit_tanks?(m, game.tanks) ->
             new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
             # decrease tank hp, and delete and add to destroyed_list if new hp = 0
             new_tanks = game.tanks
-            |> Enum.map(fn t -> if collide?(t,m), do: %Tank{t | hp: t.hp-1}, else: t end) # decrease tank hp
+            |> Enum.map(fn t -> if collide_missile_tank?(m,t), do: %Tank{t | hp: t.hp-1}, else: t end) # decrease tank hp
             %{game | missiles: new_missiles, tanks: new_tanks}
         hit?(m, game.missiles) ->
             new_missiles = Enum.reject(game.missiles, fn mm -> collide?(mm, m) end)
@@ -190,9 +200,25 @@ defmodule Tanks.Entertainment.Game do
     Enum.any?(obstacles, fn o -> collide?(missile, o) end)
   end
 
+  defp hit_tanks?(missile, tanks) do
+    Enum.any?(tanks, fn o -> collide_missile_tank?(missile, o) end)
+  end
+  defp collide_missile_tank?(missile, tank) do
+    # tank center point {cx, cy}
+    {cx, cy} = {tank.x+tank.width/2, tank.y+tank.height/2}
+    my_own_missile? = case missile.direction do
+      :up -> missile.y < cy
+      :down -> cy < missile.y
+      :left -> missile.x < cx
+      :right -> cx < missile.x
+    end
+    collide?(missile, tank) && !my_own_missile?
+  end
+
   defp collide?(a, b) do
-    abs((a.x + a.width/2) - (b.x + b.width/2)) <= (a.width + b.width) / 2 &&
-    abs((a.y + a.height/2) - (b.y + b.height/2)) <= (a.height + b.height) / 2
+    # abs((a.x + a.width/2) - (b.x + b.width/2)) <= (a.width + b.width) / 2 &&
+    # abs((a.y + a.height/2) - (b.y + b.height/2)) <= (a.height + b.height) / 2
+    :math.pow(a.x-b.x, 2) + :math.pow(a.y-b.y, 2) <= :math.pow(a.width+b.width, 2)
   end
 
   defp can_tank_move?(:up, tank, game) do
@@ -201,9 +227,9 @@ defmodule Tanks.Entertainment.Game do
     # walls and tanks
     obstacles_block? = Enum.concat([game.bricks, game.steels, game.tanks])
                     |> Enum.any?(fn o ->
-                      o.y+o.height == tank.y
-                      && tank.x > o.x-tank.width
-                      && tank.x < o.x+o.width end)
+                      o.y+o.height == tank.y &&
+                      tank.x > o.x-tank.width &&
+                      tank.x < o.x+o.width end)
     !edge_block? && !obstacles_block?
   end
   defp can_tank_move?(:down, tank, game) do
@@ -212,9 +238,9 @@ defmodule Tanks.Entertainment.Game do
     # walls and tanks
     obstacles_block? = Enum.concat([game.bricks, game.steels, game.tanks])
                     |> Enum.any?(fn o ->
-                      tank.y+tank.height == o.y
-                      && tank.x > o.x-tank.width
-                      && tank.x < o.x+o.width end)
+                      tank.y+tank.height == o.y &&
+                      tank.x > o.x-tank.width &&
+                      tank.x < o.x+o.width end)
     !edge_block? && !obstacles_block?
   end
   defp can_tank_move?(:left, tank, game) do
@@ -223,9 +249,9 @@ defmodule Tanks.Entertainment.Game do
     # walls and tanks
     obstacles_block? = Enum.concat([game.bricks, game.steels, game.tanks])
                     |> Enum.any?(fn o ->
-                      tank.x == o.x + o.width
-                      && tank.y > o.y - tank.height
-                      && tank.y < o.y + o.height end)
+                      tank.x == o.x + o.width &&
+                      tank.y > o.y - tank.height &&
+                      tank.y < o.y + o.height end)
     !edge_block? && !obstacles_block?
   end
   defp can_tank_move?(:right, tank, game) do
@@ -234,9 +260,9 @@ defmodule Tanks.Entertainment.Game do
     # walls and tanks
     obstacles_block? = Enum.concat([game.bricks, game.steels, game.tanks])
                     |> Enum.any?(fn o ->
-                      tank.x + tank.width == o.x
-                      && tank.y > o.y + tank.height
-                      && tank.y < o.y end)
+                      tank.x + tank.width == o.x &&
+                      tank.y > o.y - tank.height &&
+                      tank.y < o.y + o.height end)
     !edge_block? && !obstacles_block?
   end
 
@@ -269,6 +295,8 @@ defmodule Tanks.Entertainment.Game do
      }
   """
   defp pick_a_map do
-    Map.random_a_game_map()
+    map = Map.random_a_game_map()
+    %{map | bricks: Enum.map(map.bricks, fn b -> %Brick{x: b.x, y: b.y} end),
+            steels: Enum.map(map.steels, fn s -> %Steel{x: s.x, y: s.y} end)}
   end
 end

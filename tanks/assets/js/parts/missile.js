@@ -6,7 +6,7 @@ export default ({missile, unit}) => {
   let x = missile.x*unit, y = missile.y*unit,
       w = missile.width*unit, h = missile.height*unit;
   if (missile.direction == "left" || missile.direction == "right"){
-    temp = h;
+    let temp = h;
     h = w;
     w = temp;
   }

@@ -6,17 +6,13 @@ import Game from './game';
 
 export default (root) => {
 
-  // for testing:
+  if (is_request_valid()){ // verify that room exists or is creating the room.
+
     let channel = socket.channel(`room:${window.room_name}`, {uid: window.user});
     render(<Room channel={channel} />, root);
-
-  // if (is_request_valid()){ // verify that room exists or is creating the room.
-  //
-  //   let channel = socket.channel(`room:${window.room_name}`, {uid: window.user});
-  //   render(<Room channel={channel} />, root);
-  // } else {
-  //   alert("invalid request");
-  // }
+  } else {
+    alert("invalid request");
+  }
 
 }
 
@@ -37,60 +33,53 @@ class Room extends Component {
 
   gotView({room}) {
     this.setState(room)
-    // console.log("gotView", room);
-    // this.setState({
-    //   name: room.name,
-    //   players: room.players,
-    //   is_playing: room.is_playing,
-    // });
   }
 
   // TODO: check room status,
   //    if playing -> render game,
   //    otherwise, render room.
   render(){
-    return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
-    // if (this.state.is_playing){
-    //   return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
-    // } else {
-    //
-    //   let {name, players} = this.state;
-    //   let button_start = '';
-    //   let button_ready_cancel = '';
-    //   let button_leave = '';
-    //
-    //   // test whether current user is a player or observer
-    //   // only show button options to players
-    //   let current_player = players.find( p => p.id == window.user);
-    //   let owner = players.find( p => p.is_owner );
-    //   if ( current_player ){
-    //     button_ready_cancel =
-    //     current_player.is_ready
-    //     ?<button className="btn btn-outline-danger btn-lg btn-ready m-3" onClick={this.onCancel.bind(this)}>Cancel</button>
-    //     :<button className="btn btn-outline-success btn-lg btn-ready m-3" onClick={this.onReady.bind(this)}>Ready</button>;
-    //
-    //     button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
-    //
-    //       let disable_start = players.length < 2 || players.some( p => !p.is_ready );
-    //       if (current_player.is_owner)
-    //       button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
-    //       }
-    //
-    //       return (
-    //         <div className="text-center p-3">
-    //           <h1>Room: {name}</h1>
-    //           <div className="players d-flex justify-content-center flex-wrap">
-    //             {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
-    //           </div>
-    //           <div className="d-flex justify-content-center flex-wrap p-3">
-    //             {button_ready_cancel}
-    //             {button_start}
-    //             {button_leave}
-    //           </div>
-    //         </div>
-    //       );
-    //
-    // }
+    if (this.state.is_playing){
+      return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
+    } else {
+
+      let {name, players} = this.state;
+      let button_start = '';
+      let button_ready_cancel = '';
+      let button_leave = '';
+
+      // test whether current user is a player or observer
+      // only show button options to players
+      let current_player = players.find( p => p.id == window.user);
+      let owner = players.find( p => p.is_owner );
+      if ( current_player ){
+        button_ready_cancel =
+        current_player.is_ready
+        ?<button className="btn btn-outline-danger btn-lg btn-ready m-3" onClick={this.onCancel.bind(this)}>Cancel</button>
+        :<button className="btn btn-outline-success btn-lg btn-ready m-3" onClick={this.onReady.bind(this)}>Ready</button>;
+
+        button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
+
+          let disable_start = players.length < 2 || players.some( p => !p.is_ready );
+          if (current_player.is_owner)
+          button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
+          }
+
+          return (
+            <div className="text-center p-3">
+              <h1>Room: {name}</h1>
+              <div className="players d-flex justify-content-center flex-wrap">
+                {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
+              </div>
+              <div className="d-flex justify-content-center flex-wrap p-3">
+                {button_ready_cancel}
+                {button_start}
+                {button_leave}
+              </div>
+            </div>
+          );
+
+    }
   }
 
   channelInit(){

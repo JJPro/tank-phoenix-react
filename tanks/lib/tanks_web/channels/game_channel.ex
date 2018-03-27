@@ -42,9 +42,11 @@ defmodule TanksWeb.GameChannel do
   2. send state->gameview to client
   """
   def handle_in("fire", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
-    player = Game.get_player_from_uid(uid)
-    GenServer.cast(name, {:fire, player})
+    IO.puts ">>>>>>>>>>>>>>>>>>>>>>> FIREING <<<<<<<<<<<<<"
+    IO.inspect %{user: uid}
     game = GenServer.call(name, :get_state)
+    player = Game.get_player_from_uid(game, uid)
+    GenServer.cast(name, {:fire, player})
     broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
@@ -54,9 +56,9 @@ defmodule TanksWeb.GameChannel do
   2. send state->gameview to client
   """
   def handle_in("move", %{"uid" => uid, "direction" => direction}, %{assigns: %{name: name}} = socket) do
-    player = Game.get_player_from_uid(uid)
-    GenServer.cast(name, {:move, player, String.to_atom(direction)})
     game = GenServer.call(name, :get_state)
+    player = Game.get_player_from_uid(game, uid)
+    GenServer.cast(name, {:move, player, String.to_atom(direction)})
     broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end

@@ -13,31 +13,31 @@ export default class Game extends Component{
 
     this.channel = props.channel;
     this.state = {
-      canvas: {},
+      canvas: {width: 0, height: 0},
       tanks: [],
       missiles: [],
       bricks: [],
       steels: [],
     };
 
-    this.testData();
+    // this.testData();
 
-    // this.channelInit();
+    this.channelInit();
     this.attachKeyEventHandler();
   }
 
   componentWillMount(){
-    // this.animate();
+    this.animate();
   }
 
   render(){
-    // {canvas, tanks, missiles, bricks, steels} = this.state;
     let canvas = this.state.canvas,
         tanks = this.state.tanks,
         missiles = this.state.missiles,
         bricks = this.state.bricks,
         steels = this.state.steels;
 
+    // console.log({canvas: canvas});
     let unit = 26;
     let style = {
       border: "1px solid red",
@@ -60,10 +60,9 @@ export default class Game extends Component{
 
   // format game data as needed
   gotView(game) {
-    // console.log("got view: ", game);
     // console.log(JSON.stringify(game));
-
-    this.setState();
+    console.log(game);
+    this.setState(game);
   }
 
   channelInit() {
