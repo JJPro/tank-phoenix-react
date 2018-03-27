@@ -44,7 +44,8 @@ defmodule Tanks.Entertainment.Game do
        }
   """
   def client_view(game) do
-    game
+    # format player to json format with player_data(player)
+    %{game | tanks: Enum.map(game.tanks, fn t -> %Tank{t | player: player_data(t.player)} end) }
   end
 
   @doc """
@@ -113,6 +114,10 @@ defmodule Tanks.Entertainment.Game do
     game
     |> handle_collisions
     |> update_location_of_missiles
+  end
+
+  def get_player_from_uid(uid) do
+    Tanks.Accounts.get_user!(uid)
   end
 
   defp update_location_of_missiles(game) do
@@ -231,6 +236,20 @@ defmodule Tanks.Entertainment.Game do
                       && tank.y > o.y + tank.height
                       && tank.y < o.y end)
     !edge_block? && !obstacles_block?
+  end
+
+  @doc """
+  format player object to json format
+  player is: %{owner?: bool, ready?: bool, user: %User{}}
+  :: %{name: string, id: int, owner?: bool, ready?: bool}
+  """
+  defp player_data(player) do
+    %{
+      name: player.user.name,
+      id: player.user.id,
+      is_owner: player.owner?,
+      is_ready: player.ready?,
+    }
   end
 
   @doc """
