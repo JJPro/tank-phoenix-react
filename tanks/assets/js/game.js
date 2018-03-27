@@ -58,7 +58,7 @@ export default class Game extends Component{
   // format game data as needed
   gotView(game) {
     // console.log("got view: ", game);
-    // console.log("got view", JSON.stringify(game));
+    console.log("got view", JSON.stringify(game));
     this.setState(game);
   }
 
