@@ -7,7 +7,7 @@ defmodule Tanks.Entertainment.Room do
     %{
       name: name,
       players: [%{user: user, ready?: false, owner?: true}],
-      playing: false,
+      playing?: false,
     }
   end
 
@@ -74,13 +74,13 @@ defmodule Tanks.Entertainment.Room do
         {:error, %{reason: 'players are not ready'}}
       true ->
         GameServer.start(Game.new(room.players), room.name)
-        {:ok, %{room | playing: true}}
+        {:ok, %{room | playing?: true}}
     end
   end
 
   def end_game(room) do
     GameServer.terminate(room.name)
-    %{room | playing: false}
+    %{room | playing?: false}
   end
 
   @doc """
@@ -88,7 +88,7 @@ defmodule Tanks.Entertainment.Room do
   """
   def get_status(room) do
     cond do
-      room.playing -> :playing
+      room.playing? -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end

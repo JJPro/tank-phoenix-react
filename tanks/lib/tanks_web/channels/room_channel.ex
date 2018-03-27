@@ -186,9 +186,10 @@ defmodule TanksWeb.RoomChannel do
   defp room_data(room) do
     # IO.puts '+++++++++++'
     # IO.inspect room
-
     %{
-      room | players: Enum.map(room.players, fn p -> player_data(p) end)
+      name: room.name,
+      players: Enum.map(room.players, fn p -> player_data(p) end),
+      is_playing: room.playing?,
     }
   end
 end

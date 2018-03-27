@@ -12,10 +12,16 @@ defmodule TanksWeb.GameChannel do
   :: send back gameview, no broadcast needed
   """
   def join("game:"<>name, payload, socket) do
+
+    IO.puts ">>>>>>>> Joining Game #{name}"
     if authorized?(payload) do
       # new game process is attached by room_channel
-      game = GenServer.call(name, :get_state)
+      name = String.to_atom(name)
+      # IO.inspect %{name: name, game: GenServer.whereis(name)}
 
+      # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
+      game = GenServer.call(name, :get_state)
+      IO.inspect {">>>>>>>>>>>> game", game}
       {:ok, Game.client_view(game), socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -40,6 +46,7 @@ defmodule TanksWeb.GameChannel do
     player = Game.get_player_from_uid(uid)
     GenServer.cast(name, {:fire, player})
     game = GenServer.call(name, :get_state)
+    broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 
@@ -51,6 +58,7 @@ defmodule TanksWeb.GameChannel do
     player = Game.get_player_from_uid(uid)
     GenServer.cast(name, {:move, player, String.to_atom(direction)})
     game = GenServer.call(name, :get_state)
+    broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 
