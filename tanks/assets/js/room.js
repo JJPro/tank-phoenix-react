@@ -1,12 +1,16 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 import socket from './socket';
+import game from './game';
 
 
 export default (root) => {
 
-  if (is_request_valid()){
+  if (is_request_valid()){ // verify that room exists or is creating the room.
 
+    // TODO: check room status,
+    //    if playing -> render game,
+    //    otherwise, render room.
     let channel = socket.channel(`room:${window.room_name}`, {uid: window.user});
     render(<Room channel={channel} />, root);
   } else {
@@ -39,6 +43,7 @@ class Room extends Component {
   }
 
   render(){
+
     let {name, players} = this.state;
     let button_start = '';
     let button_ready_cancel = '';
