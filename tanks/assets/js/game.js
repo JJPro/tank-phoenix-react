@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import socket from './socket';
 import Konva from 'konva';
 import { Stage, Layer, Rect, Text } from 'react-konva';
+import Tank from './parts/tank';
+import Missile from './parts/missile';
+import Brick from './parts/brick';
+import Steel from './parts/steel';
 
 export default class Game extends Component{
   constructor(props) {
@@ -16,15 +20,16 @@ export default class Game extends Component{
       steels: [],
     };
 
-    this.channelInit();
+    this.testData();
+
+    // this.channelInit();
   }
 
   componentWillMount(){
-    this.animate();
+    // this.animate();
   }
 
   render(){
-    console.log(this.state);
     // {canvas, tanks, missiles, bricks, steels} = this.state;
     let canvas = this.state.canvas,
         tanks = this.state.tanks,
@@ -32,24 +37,31 @@ export default class Game extends Component{
         bricks = this.state.bricks,
         steels = this.state.steels;
 
+    let unit = 26;
     let style = {
       border: "1px solid red",
-      width: canvas.width,
-      height: canvas.height,
+      width: canvas.width * unit,
+      height: canvas.height * unit,
     };
-    return (
-      <Stage width={canvas.width} height={canvas.height} style={style}>
-        <Layer>
 
+    return (
+      <Stage width={canvas.width * unit} height={canvas.height * unit} style={style}>
+        <Layer>
+          {tanks.map( t => <Tank tank={t} unit={unit} key={t.player.id} />)}
+          {bricks.map( (b,i) => <Brick brick={b} unit={unit} key={i} />)}
+          {steels.map( (s,i) => <Steel steel={s} unit={unit} key={i} />)}
+          {missiles.map( (m,i) => <Missile missile={m} unit={unit} key={i} />)}
         </Layer>
       </Stage>
     );
   }
 
   // format game data as needed
-  gotView({game}) {
+  gotView(game) {
     // console.log("got view: ", game);
-    this.setState(game);
+    // console.log(JSON.stringify(game));
+
+    this.setState();
   }
 
   channelInit() {
@@ -63,7 +75,7 @@ export default class Game extends Component{
   animate() {
     this.channel.push("get_state")
       .receive("ok", game => {
-        this.setState(game);
+        this.gotView(game);
         requestAnimationFrame(this.animate.bind(this));
       });
   }
@@ -112,5 +124,12 @@ export default class Game extends Component{
       this.channel.push("fire", {uid: window.user})
           .receive("ok", this.gotView.bind(this));
     }
+  }
+
+  testData(){
+
+    let data = {"tanks":[{"y":0,"x":0,"width":2,"player":{"name":"Lu Ji","is_ready":true,"is_owner":false,"id":2},"orientation":"down","hp":4,"height":2},{"y":24,"x":24,"width":2,"player":{"name":"Joyce","is_ready":true,"is_owner":true,"id":3},"orientation":"up","hp":4,"height":2}],"steels":[{"y":12,"x":0},{"y":12,"x":1},{"y":0,"x":11},{"y":1,"x":11},{"y":24,"x":11},{"y":25,"x":11},{"y":12,"x":12},{"y":13,"x":12},{"y":12,"x":13},{"y":13,"x":13},{"y":0,"x":14},{"y":1,"x":14},{"y":24,"x":14},{"y":25,"x":14},{"y":12,"x":24},{"y":12,"x":25}],"missiles":[],"destroyed_tanks_last_frame":[],"canvas":{"width":26,"height":26},"bricks":[{"y":2,"x":2},{"y":3,"x":2},{"y":4,"x":2},{"y":5,"x":2},{"y":6,"x":2},{"y":7,"x":2},{"y":10,"x":2},{"y":11,"x":2},{"y":12,"x":2},{"y":13,"x":2},{"y":14,"x":2},{"y":15,"x":2},{"y":18,"x":2},{"y":19,"x":2},{"y":20,"x":2},{"y":21,"x":2},{"y":22,"x":2},{"y":23,"x":2},{"y":2,"x":3},{"y":3,"x":3},{"y":4,"x":3},{"y":5,"x":3},{"y":6,"x":3},{"y":7,"x":3},{"y":10,"x":3},{"y":11,"x":3},{"y":12,"x":3},{"y":13,"x":3},{"y":14,"x":3},{"y":15,"x":3},{"y":18,"x":3},{"y":19,"x":3},{"y":20,"x":3},{"y":21,"x":3},{"y":22,"x":3},{"y":23,"x":3},{"y":12,"x":4},{"y":13,"x":4},{"y":12,"x":5},{"y":13,"x":5},{"y":2,"x":6},{"y":3,"x":6},{"y":4,"x":6},{"y":7,"x":6},{"y":8,"x":6},{"y":9,"x":6},{"y":12,"x":6},{"y":13,"x":6},{"y":16,"x":6},{"y":17,"x":6},{"y":18,"x":6},{"y":21,"x":6},{"y":22,"x":6},{"y":23,"x":6},{"y":2,"x":7},{"y":3,"x":7},{"y":4,"x":7},{"y":7,"x":7},{"y":8,"x":7},{"y":9,"x":7},{"y":12,"x":7},{"y":13,"x":7},{"y":16,"x":7},{"y":17,"x":7},{"y":18,"x":7},{"y":21,"x":7},{"y":22,"x":7},{"y":23,"x":7},{"y":2,"x":10},{"y":3,"x":10},{"y":4,"x":10},{"y":5,"x":10},{"y":6,"x":10},{"y":7,"x":10},{"y":10,"x":10},{"y":11,"x":10},{"y":12,"x":10},{"y":13,"x":10},{"y":14,"x":10},{"y":15,"x":10},{"y":18,"x":10},{"y":19,"x":10},{"y":20,"x":10},{"y":21,"x":10},{"y":22,"x":10},{"y":23,"x":10},{"y":2,"x":11},{"y":3,"x":11},{"y":4,"x":11},{"y":5,"x":11},{"y":6,"x":11},{"y":7,"x":11},{"y":10,"x":11},{"y":11,"x":11},{"y":12,"x":11},{"y":13,"x":11},{"y":14,"x":11},{"y":15,"x":11},{"y":18,"x":11},{"y":19,"x":11},{"y":20,"x":11},{"y":21,"x":11},{"y":22,"x":11},{"y":23,"x":11},{"y":5,"x":12},{"y":6,"x":12},{"y":19,"x":12},{"y":20,"x":12},{"y":5,"x":13},{"y":6,"x":13},{"y":19,"x":13},{"y":20,"x":13},{"y":2,"x":14},{"y":3,"x":14},{"y":4,"x":14},{"y":5,"x":14},{"y":6,"x":14},{"y":7,"x":14},{"y":10,"x":14},{"y":11,"x":14},{"y":12,"x":14},{"y":13,"x":14},{"y":14,"x":14},{"y":15,"x":14},{"y":18,"x":14},{"y":19,"x":14},{"y":20,"x":14},{"y":21,"x":14},{"y":22,"x":14},{"y":23,"x":14},{"y":2,"x":15},{"y":3,"x":15},{"y":4,"x":15},{"y":5,"x":15},{"y":6,"x":15},{"y":7,"x":15},{"y":10,"x":15},{"y":11,"x":15},{"y":12,"x":15},{"y":13,"x":15},{"y":14,"x":15},{"y":15,"x":15},{"y":18,"x":15},{"y":19,"x":15},{"y":20,"x":15},{"y":21,"x":15},{"y":22,"x":15},{"y":23,"x":15},{"y":2,"x":18},{"y":3,"x":18},{"y":4,"x":18},{"y":7,"x":18},{"y":8,"x":18},{"y":9,"x":18},{"y":12,"x":18},{"y":13,"x":18},{"y":16,"x":18},{"y":17,"x":18},{"y":18,"x":18},{"y":21,"x":18},{"y":22,"x":18},{"y":23,"x":18},{"y":2,"x":19},{"y":3,"x":19},{"y":4,"x":19},{"y":7,"x":19},{"y":8,"x":19},{"y":9,"x":19},{"y":12,"x":19},{"y":13,"x":19},{"y":16,"x":19},{"y":17,"x":19},{"y":18,"x":19},{"y":21,"x":19},{"y":22,"x":19},{"y":23,"x":19},{"y":12,"x":20},{"y":13,"x":20},{"y":12,"x":21},{"y":13,"x":21},{"y":2,"x":22},{"y":3,"x":22},{"y":4,"x":22},{"y":5,"x":22},{"y":6,"x":22},{"y":7,"x":22},{"y":10,"x":22},{"y":11,"x":22},{"y":12,"x":22},{"y":13,"x":22},{"y":14,"x":22},{"y":15,"x":22},{"y":18,"x":22},{"y":19,"x":22},{"y":20,"x":22},{"y":21,"x":22},{"y":22,"x":22},{"y":23,"x":22},{"y":2,"x":23},{"y":3,"x":23},{"y":4,"x":23},{"y":5,"x":23},{"y":6,"x":23},{"y":7,"x":23},{"y":10,"x":23},{"y":11,"x":23},{"y":12,"x":23},{"y":13,"x":23},{"y":14,"x":23},{"y":15,"x":23},{"y":18,"x":23},{"y":19,"x":23},{"y":20,"x":23},{"y":21,"x":23},{"y":22,"x":23},{"y":23,"x":23}]};
+    this.state = data;
+    console.log(data);
   }
 }

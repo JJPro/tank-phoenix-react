@@ -5,7 +5,7 @@ defmodule Tanks.Entertainment.Game do
 
   alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick, Map}
 
-  def new(players, width \\ 800, height \\ 800) do
+  def new(players, width \\ 26, height \\ 26) do
     tanks = case length(players) do
       2 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
             %Tank{x: width-2, y: height-2, orientation: :up, player: Enum.at(players, 1)}]
@@ -19,6 +19,7 @@ defmodule Tanks.Entertainment.Game do
     end
 
     map = pick_a_map;
+    tanks = attach_images_to_tanks(tanks);
 
     %{
       canvas: %{width: width, height: height},
@@ -250,6 +251,21 @@ defmodule Tanks.Entertainment.Game do
       is_owner: player.owner?,
       is_ready: player.ready?,
     }
+  end
+
+  defp attach_images_to_tanks(tanks) do
+    urls = ["/images/tank-cyan.png",
+           "/images/tank-red.png",
+           "/images/tank-army-green.png",
+           "/images/tank-yellow.png",
+           "/images/tank-khaki.png",
+           "/images/tank-green.png",
+           "/images/tank-magenta.png",
+           "/images/tank-purple.png",]
+    tanks
+    |> Enum.with_index
+    |> Enum.map(fn(t, i) -> %{t | image: Enum.at(urls, i)} end)
+
   end
 
   @doc """
