@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import socket from './socket';
 import Konva from 'konva';
 import { Stage, Layer, Rect, Text } from 'react-konva';
+import Tank from './parts/tank';
+import Missile from './parts/missile';
+import Brick from './parts/brick';
+import Steel from './parts/steel';
 
 export default class Game extends Component{
   constructor(props) {
@@ -32,15 +36,20 @@ export default class Game extends Component{
         bricks = this.state.bricks,
         steels = this.state.steels;
 
+    let unit = 26;
     let style = {
       border: "1px solid red",
-      width: canvas.width,
-      height: canvas.height,
+      width: canvas.width * unit,
+      height: canvas.height * unit,
     };
-    return (
-      <Stage width={canvas.width} height={canvas.height} style={style}>
-        <Layer>
 
+    return (
+      <Stage width={canvas.width * unit} height={canvas.height * unit} style={style}>
+        <Layer>
+          {tanks.map( t => <Tank tank={t} unit={unit} key={t.player.id} />)}
+          {bricks.map( (b,i) => <Brick brick={b} unit={unit} key={i} />)}
+          {steels.map( (s,i) => <Steel steel={s} unit={unit} key={i} />)}
+          {missiles.map( (m,i) => <Missile missile={m} unit={unit} key={i} />)}
         </Layer>
       </Stage>
     );
@@ -57,7 +66,7 @@ export default class Game extends Component{
         .receive("ok", this.gotView.bind(this))
         .receive("error", resp => { console.error("Unable to join", resp) });
 
-    this.channel.on("update", game => this.gotView(game) );
+    this.channel.on("update", this.gotView.bind(this) );
   }
 
   animate() {
