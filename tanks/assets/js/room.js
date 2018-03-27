@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
-import socket from './socket'
+import socket from './socket';
 
 
 export default (root) => {
@@ -184,15 +184,20 @@ function Player({player, owner, onKickout, index}){
     backgroundSize: 'contain',
     display: 'inline-block',
   };
-
   tank_thumbnail_style.backgroundImage = tank_thumbnails[index];
+
+  let btn_kickout_wrapper_style = {
+    height: "2.5em"
+  };
 
   return (
     <div className="player-card-wrapper align-self-stretch p-3 text-center">
       <div className={`player-card ${owner_class} text-center`} style={card_style}>
         <h2>{name}</h2>
         <div className="ready-box" style={ready_box_style}></div>
-        {kickout_button}
+        <div className="btn-kickout-wrapper" style={btn_kickout_wrapper_style}>
+          {kickout_button}
+        </div>
       </div>
       <div className="tank-thumbnail" style={tank_thumbnail_style}></div>
     </div>
