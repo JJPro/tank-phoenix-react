@@ -115,6 +115,10 @@ defmodule Tanks.Entertainment.Game do
     |> update_location_of_missiles
   end
 
+  def get_player_from_uid(game, uid) do
+    Tanks.Accounts.get_user!(uid)
+  end
+
   defp update_location_of_missiles(game) do
     new_missiles = game.missiles
                     |> Enum.map(

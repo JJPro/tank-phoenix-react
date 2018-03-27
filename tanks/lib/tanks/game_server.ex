@@ -14,6 +14,10 @@ defmodule Tanks.GameServer do
     GenServer.cast(name, :auto_update_state)
   end
 
+  def end(name) do
+    GenServer.stop(name)
+  end
+
 
 
 ## Server Implementations
@@ -23,16 +27,18 @@ defmodule Tanks.GameServer do
     {:noreply, {servername, Game.next_state(game)}}
   end
 
-  def handle_cast(:request_state, {servername, game}) do
-
+  @doc """
+  :: game
+  """
+  def handle_call(:get_state, {servername, game}) do
+    {:reply, game, game}
   end
 
   def handle_cast({:fire, player}, {servername, game}) do
-
+    {:noreply, {servername, Game.fire(game, player)}}
   end
 
   def handle_cast({:move, player, direction}, {servername, game}) do
-
+    {:noreply, {servername, Game.move(game, player, direction)}}
   end
-
 end

@@ -1,12 +1,13 @@
 defmodule Tanks.Entertainment.Room do
 
   alias Tanks.Entertainment.Game
+  alias Tanks.GameServer
 
   def new(name, user) do
     %{
       name: name,
       players: [%{user: user, ready?: false, owner?: true}],
-      game: nil,
+      playing: false,
     }
   end
 
@@ -72,12 +73,14 @@ defmodule Tanks.Entertainment.Room do
       Enum.any?(room.players, fn(p) -> not p.ready? end) ->
         {:error, %{reason: 'players are not ready'}}
       true ->
-        {:ok, %{room | game: Game.new(room.players)} }
+        GameServer.start(Game.new(room.players), room.name})
+        {:ok, %{room | playing: true}}
     end
   end
 
   def end_game(room) do
-    %{room | game: nil}
+    GameServer.end(room.name)
+    %{room | playing: false}
   end
 
   @doc """
@@ -85,7 +88,7 @@ defmodule Tanks.Entertainment.Room do
   """
   def get_status(room) do
     cond do
-      room.game -> :playing
+      room.playing -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end
