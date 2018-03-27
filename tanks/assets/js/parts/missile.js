@@ -3,5 +3,12 @@ import Konva from 'konva';
 import { Stage, Layer, Rect, Text } from 'react-konva';
 
 export default ({missile, unit}) => {
-  return (<Rect x={missile.x*unit} y={missile.y*unit} width={missile.width * unit} height={missile.height * unit} fill={"gray"} />);
+  let x = missile.x*unit, y = missile.y*unit,
+      w = missile.width*unit, h = missile.height*unit;
+  if (missile.direction == "left" || missile.direction == "right"){
+    temp = h;
+    h = w;
+    w = temp;
+  }
+  return (<Rect x={x-w/2} y={y-h/2} width={w} height={h} fill={"black"} />);
 }
