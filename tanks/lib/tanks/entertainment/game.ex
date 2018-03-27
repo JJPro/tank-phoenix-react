@@ -3,7 +3,7 @@ defmodule Tanks.Entertainment.Game do
   manage game state
   """
 
-  alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick}
+  alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick, Map}
 
   def new(players, width \\ 800, height \\ 800) do
     tanks = case length(players) do
@@ -241,6 +241,6 @@ defmodule Tanks.Entertainment.Game do
      }
   """
   defp pick_a_map do
-    %{bricks: [], steels: []}
+    Map.random_a_game_map()
   end
 end
