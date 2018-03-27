@@ -6,17 +6,13 @@ import Game from './game';
 
 export default (root) => {
 
-  // for testing:
+  if (is_request_valid()){ // verify that room exists or is creating the room.
+
     let channel = socket.channel(`room:${window.room_name}`, {uid: window.user});
     render(<Room channel={channel} />, root);
-
-  // if (is_request_valid()){ // verify that room exists or is creating the room.
-  //
-  //   let channel = socket.channel(`room:${window.room_name}`, {uid: window.user});
-  //   render(<Room channel={channel} />, root);
-  // } else {
-  //   alert("invalid request");
-  // }
+  } else {
+    alert("invalid request");
+  }
 
 }
 
@@ -49,48 +45,47 @@ class Room extends Component {
   //    if playing -> render game,
   //    otherwise, render room.
   render(){
-    return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
-    // if (this.state.is_playing){
-    //   return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
-    // } else {
-    //
-    //   let {name, players} = this.state;
-    //   let button_start = '';
-    //   let button_ready_cancel = '';
-    //   let button_leave = '';
-    //
-    //   // test whether current user is a player or observer
-    //   // only show button options to players
-    //   let current_player = players.find( p => p.id == window.user);
-    //   let owner = players.find( p => p.is_owner );
-    //   if ( current_player ){
-    //     button_ready_cancel =
-    //     current_player.is_ready
-    //     ?<button className="btn btn-outline-danger btn-lg btn-ready m-3" onClick={this.onCancel.bind(this)}>Cancel</button>
-    //     :<button className="btn btn-outline-success btn-lg btn-ready m-3" onClick={this.onReady.bind(this)}>Ready</button>;
-    //
-    //     button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
-    //
-    //       let disable_start = players.length < 2 || players.some( p => !p.is_ready );
-    //       if (current_player.is_owner)
-    //       button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
-    //       }
-    //
-    //       return (
-    //         <div className="text-center p-3">
-    //           <h1>Room: {name}</h1>
-    //           <div className="players d-flex justify-content-center flex-wrap">
-    //             {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
-    //           </div>
-    //           <div className="d-flex justify-content-center flex-wrap p-3">
-    //             {button_ready_cancel}
-    //             {button_start}
-    //             {button_leave}
-    //           </div>
-    //         </div>
-    //       );
-    //
-    // }
+    if (this.state.is_playing){
+      return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
+    } else {
+
+      let {name, players} = this.state;
+      let button_start = '';
+      let button_ready_cancel = '';
+      let button_leave = '';
+
+      // test whether current user is a player or observer
+      // only show button options to players
+      let current_player = players.find( p => p.id == window.user);
+      let owner = players.find( p => p.is_owner );
+      if ( current_player ){
+        button_ready_cancel =
+        current_player.is_ready
+        ?<button className="btn btn-outline-danger btn-lg btn-ready m-3" onClick={this.onCancel.bind(this)}>Cancel</button>
+        :<button className="btn btn-outline-success btn-lg btn-ready m-3" onClick={this.onReady.bind(this)}>Ready</button>;
+
+        button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
+
+          let disable_start = players.length < 2 || players.some( p => !p.is_ready );
+          if (current_player.is_owner)
+          button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
+          }
+
+          return (
+            <div className="text-center p-3">
+              <h1>Room: {name}</h1>
+              <div className="players d-flex justify-content-center flex-wrap">
+                {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
+              </div>
+              <div className="d-flex justify-content-center flex-wrap p-3">
+                {button_ready_cancel}
+                {button_start}
+                {button_leave}
+              </div>
+            </div>
+          );
+
+    }
   }
 
   channelInit(){
@@ -159,20 +154,12 @@ class Room extends Component {
 }
 
 function Player({player, owner, onKickout, index}){
+  // console.log('player', player);
   let owner_class = player.is_owner ? "room-owner" : '';
   let name = player.id == window.user ? "YOU" : player.name;
   let kickout_button = (window.user == owner.id && player.id != owner.id)
                         ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
-  let tank_thumbnails = ['url("/images/tank-cyan.png")',
-                         'url("/images/tank-red.png")',
-                         'url("/images/tank-army-green.png")',
-                         'url("/images/tank-yellow.png")',
-                         'url("/images/tank-khaki.png")',
-                         'url("/images/tank-green.png")',
-                         'url("/images/tank-magenta.png")',
-                         'url("/images/tank-purple.png")',];
-
   let card_style = {
     borderRadius: 10,
     padding: 10,
@@ -201,7 +188,7 @@ function Player({player, owner, onKickout, index}){
     backgroundSize: 'contain',
     display: 'inline-block',
   };
-  tank_thumbnail_style.backgroundImage = tank_thumbnails[index];
+  tank_thumbnail_style.backgroundImage = `url("${player.tank_thumbnail}")`;
 
   let btn_kickout_wrapper_style = {
     height: "2.5em"
