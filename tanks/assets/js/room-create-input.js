@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 export default (root) => render(<Input />, root);
 
 const STATUS_FULL = "full",
-      STATUS_INBATTLE = "in battle",
+      STATUS_PLAYING = "playing",
       STATUS_OPEN = "open",
       STATUS_NOT_EXIST = "";
 
@@ -32,21 +32,10 @@ class Input extends Component {
         .then((json) => {
           console.log(json.data);
           this.setState({room_status: json.data.room_status});
-        });
+        }
+      );
     }
 
-
-  }
-
-  joinGame() {
-
-  }
-
-  observeGame() {
-
-  }
-
-  createGame() {
 
   }
 
@@ -54,18 +43,18 @@ class Input extends Component {
     let buttons;
 
     if (this.state.term.trim() == "") buttons = '';
-    else if (this.state.room_status == STATUS_FULL || this.state.room_status == STATUS_INBATTLE) {
+    else if (this.state.room_status == STATUS_FULL || this.state.room_status == STATUS_PLAYING) {
       buttons = <div className="input-group-append">
-                  <button className="btn btn-outline-secondary" type="button" onClick={this.observeGame.bind(this)}>Observe</button>
+                  <a className="btn btn-outline-info" href={window.room_url.replace('placeholder', this.state.term.trim() )}>Observe</a>
                 </div>;
     } else if (this.state.room_status == STATUS_OPEN) {
       buttons = <div className="input-group-append">
-                  <button className="btn btn-outline-secondary" type="button" onClick={this.joinGame.bind(this)}>Join</button>
-                  <button className="btn btn-outline-secondary" type="button" onClick={this.observeGame.bind(this)}>Observe</button>
+                  <a className="btn btn-outline-success" href={window.room_url.replace('placeholder', this.state.term.trim() + "?join=true" )}>Join</a>
+                  <a className="btn btn-outline-info" href={window.room_url.replace('placeholder', this.state.term.trim() )}>Observe</a>
                 </div>;
     } else {
       buttons = <div className="input-group-append">
-                  <button className="btn btn-outline-secondary" type="button" onClick={this.createGame.bind(this)}>Create</button>
+                  <a className="btn btn-outline-primary" href={window.room_url.replace('placeholder', this.state.term.trim() + "?create=true" )}>Create</a>
                 </div>;
     }
 

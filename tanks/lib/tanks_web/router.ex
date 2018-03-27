@@ -3,7 +3,7 @@ defmodule TanksWeb.Router do
 
   pipeline :browser do
     plug :accepts, ["html"]
-    plug :fetch_session
+    plug :fetch_session # provides put_session\3, get_session\2
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -28,11 +28,12 @@ defmodule TanksWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+    get "/room/:name", RoomController, :show
   end
 
   # Other scopes may use custom stacks.
   scope "/api/v1", TanksWeb do
     pipe_through :api
-    get "/room_status/:room", PageController, :get_room_status
+    get "/room_status/:name", PageController, :get_room_status
   end
 end

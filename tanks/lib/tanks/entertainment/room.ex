@@ -1,22 +1,27 @@
 defmodule Tanks.Entertainment.Room do
 
+  alias Tanks.Entertainment.Game
+
   def new(name, user) do
     %{
       name: name,
       players: [%{user: user, ready?: false, owner?: true}],
-      observers: [],
       game: nil,
     }
   end
 
   def add_player(room, user) do
-    %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+    if get_player_from_user(room, user) do
+      room
+    else
+      %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+    end
   end
 
   @doc """
   :: {:ok, room} | {:error, nil}
   3 scenarios:
-    1. last player: destroy room
+    1. last player: destroy room, return {:error, nil}
     2. owner & other players in the room: shift owner to first player in line
     3. non-owner: delete element
   """
@@ -37,24 +42,42 @@ defmodule Tanks.Entertainment.Room do
     end
   end
 
-  def make_ready(room, user) do
-    %{room | players: Enum.map(
+  def player_ready(room, user) do
+    # IO.puts ">>>> player_ready"
+    # IO.inspect user
+    # IO.puts "********** Before"
+    # IO.inspect room
+
+
+    room = %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: true} || p) end)}
+    # IO.puts "*********** After"
+    # IO.inspect room
   end
 
-  def cancel_ready(room, user) do
+  def player_cancel_ready(room, user) do
     %{room | players: Enum.map(
                         room.players,
                         fn p -> (p.user == user && %{p | ready?: false} || p) end)}
   end
 
-  def add_observer(room, user) do
-
+  @doc """
+  :: {:ok, %{room: room}} | {:error, %{reason: string}}
+  """
+  def start_game(room) do
+    cond do
+      length(room.players) < 2 ->
+        {:error, %{reason: 'not enough players'}}
+      Enum.any?(room.players, fn(p) -> not p.ready? end) ->
+        {:error, %{reason: 'players are not ready'}}
+      true ->
+        {:ok, %{room | game: Game.new(room.players)} }
+    end
   end
 
-  def remove_observer(room, user) do
-
+  def end_game(room) do
+    %{room | game: nil}
   end
 
   @doc """
@@ -62,7 +85,7 @@ defmodule Tanks.Entertainment.Room do
   """
   def get_status(room) do
     cond do
-      is_nil(room.game) -> :playing
+      room.game -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end

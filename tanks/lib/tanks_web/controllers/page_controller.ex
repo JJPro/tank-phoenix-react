@@ -16,10 +16,6 @@ defmodule TanksWeb.PageController do
     room_status = if room, do: Room.get_status(room), else: nil
 
     render(conn, "show.json", room_status: room_status)
-
-    # sample response for testing
-    # render(conn, "show.json", room_status: statuses.full)
-
   end
 
 end

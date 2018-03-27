@@ -19,11 +19,25 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
-
-
 import create_room_field from './room-create-input';
-create_room_field(document.getElementById('create-room-field'));
+import list_rooms from './list-rooms';
+import room_init from './room';
 
+function init(){
+  let create_room_field_root = document.getElementById('create-room-field');
+  if (create_room_field_root){
+    create_room_field(create_room_field_root);
+  }
 
-import list from './list-rooms';
-list(document.getElementById('rooms-list'));
+  let list_rooms_root = document.getElementById('rooms-list');
+  if (list_rooms_root){
+    list_rooms(list_rooms_root);
+  }
+
+  let show_room_root = document.getElementById('room');
+  if (show_room_root){
+    room_init(show_room_root);
+  }
+}
+
+$(init);
