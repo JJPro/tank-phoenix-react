@@ -1,20 +1,32 @@
 defmodule Tanks.Entertainment.Room do
 
   alias Tanks.Entertainment.Game
+  alias Tanks.GameServer
 
   def new(name, user) do
     %{
       name: name,
-      players: [%{user: user, ready?: false, owner?: true}],
-      game: nil,
+      players: [%{user: user, ready?: false, owner?: true, tank_thumbnail: "/images/tank-cyan.png"}],
+      playing?: false,
     }
   end
 
   def add_player(room, user) do
+    urls = ["/images/tank-cyan.png",
+            "/images/tank-red.png",
+            "/images/tank-army-green.png",
+            "/images/tank-yellow.png",
+            "/images/tank-khaki.png",
+            "/images/tank-green.png",
+            "/images/tank-magenta.png",
+            "/images/tank-purple.png",]
+    thumbnail = Enum.at(urls, length(room.players))
+
+    # if user already exists in the room
     if get_player_from_user(room, user) do
       room
     else
-      %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+      %{room | players: [%{user: user, ready?: false, owner?: false, tank_thumbnail: thumbnail} | room.players]}
     end
   end
 
@@ -72,12 +84,14 @@ defmodule Tanks.Entertainment.Room do
       Enum.any?(room.players, fn(p) -> not p.ready? end) ->
         {:error, %{reason: 'players are not ready'}}
       true ->
-        {:ok, %{room | game: Game.new(room.players)} }
+        GameServer.start(Game.new(room.players), room.name)
+        {:ok, %{room | playing?: true}}
     end
   end
 
   def end_game(room) do
-    %{room | game: nil}
+    GameServer.terminate(room.name)
+    %{room | playing?: false}
   end
 
   @doc """
@@ -85,7 +99,7 @@ defmodule Tanks.Entertainment.Room do
   """
   def get_status(room) do
     cond do
-      room.game -> :playing
+      room.playing? -> :playing
       length(room.players) == 4 -> :full
       true -> :open
     end

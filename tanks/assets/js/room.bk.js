@@ -33,6 +33,12 @@ class Room extends Component {
 
   gotView({room}) {
     this.setState(room)
+    // console.log("gotView", room);
+    // this.setState({
+    //   name: room.name,
+    //   players: room.players,
+    //   is_playing: room.is_playing,
+    // });
   }
 
   // TODO: check room status,
@@ -148,20 +154,12 @@ class Room extends Component {
 }
 
 function Player({player, owner, onKickout, index}){
+  // console.log('player', player);
   let owner_class = player.is_owner ? "room-owner" : '';
   let name = player.id == window.user ? "YOU" : player.name;
   let kickout_button = (window.user == owner.id && player.id != owner.id)
                         ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
-  let tank_thumbnails = ['url("/images/tank-cyan.png")',
-                         'url("/images/tank-red.png")',
-                         'url("/images/tank-army-green.png")',
-                         'url("/images/tank-yellow.png")',
-                         'url("/images/tank-khaki.png")',
-                         'url("/images/tank-green.png")',
-                         'url("/images/tank-magenta.png")',
-                         'url("/images/tank-purple.png")',];
-
   let card_style = {
     borderRadius: 10,
     padding: 10,
@@ -190,7 +188,7 @@ function Player({player, owner, onKickout, index}){
     backgroundSize: 'contain',
     display: 'inline-block',
   };
-  tank_thumbnail_style.backgroundImage = tank_thumbnails[index];
+  tank_thumbnail_style.backgroundImage = `url("${player.tank_thumbnail}")`;
 
   let btn_kickout_wrapper_style = {
     height: "2.5em"
