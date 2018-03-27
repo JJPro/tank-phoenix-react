@@ -16,12 +16,17 @@ export default class Game extends Component{
     this.channelInit();
   }
 
+  componentWillMount(){
+    this.animate();
+  }
+
   render(){
     return <div>Game World</div>
   }
 
+  // format game data as needed
   gotView({game}) {
-    console.log("got view: ", game);
+    // console.log("got view: ", game);
     this.setState(game);
   }
 
@@ -31,6 +36,14 @@ export default class Game extends Component{
         .receive("error", resp => { console.error("Unable to join", resp) });
 
     this.channel.on("update", game => this.gotView(game) );
+  }
+
+  animate() {
+    this.channel.push("get_state")
+      .receive("ok", game => {
+        this.setState(game);
+        requestAnimationFrame(this.animate.bind(this));
+      });
   }
 
   /***

@@ -13,7 +13,6 @@ defmodule TanksWeb.GameChannel do
   """
   def join("game:"<>name, payload, socket) do
 
-    IO.puts ">>>>>>>> Joining Game #{name}"
     if authorized?(payload) do
       # new game process is attached by room_channel
       name = String.to_atom(name)
@@ -21,8 +20,8 @@ defmodule TanksWeb.GameChannel do
 
       # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
       game = GenServer.call(name, :get_state)
-      IO.inspect {">>>>>>>>>>>> game", game}
-      {:ok, Game.client_view(game), socket}
+      # IO.inspect {">>>>>>>>>>>> game", game}
+      {:ok, Game.client_view(game), assign(socket, :name, name)}
     else
       {:error, %{reason: "unauthorized"}}
     end
