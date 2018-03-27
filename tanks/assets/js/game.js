@@ -9,6 +9,7 @@ export default class Game extends Component{
 
     this.channel = props.channel;
     this.state = {
+      canvas: {},
       tanks: [],
       missiles: [],
       bricks: [],
@@ -23,10 +24,26 @@ export default class Game extends Component{
   }
 
   render(){
+    console.log(this.state);
+    // {canvas, tanks, missiles, bricks, steels} = this.state;
+    let canvas = this.state.canvas,
+        tanks = this.state.tanks,
+        missiles = this.state.missiles,
+        bricks = this.state.bricks,
+        steels = this.state.steels;
 
-    return <div>Game World
-    <input  onKeyDown={this.onKeyDown.bind(this)} />
-    </div>
+    let style = {
+      border: "1px solid red",
+      width: canvas.width,
+      height: canvas.height,
+    };
+    return (
+      <Stage width={canvas.width} height={canvas.height} style={style}>
+        <Layer>
+
+        </Layer>
+      </Stage>
+    );
   }
 
   // format game data as needed
