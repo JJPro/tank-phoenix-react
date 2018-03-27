@@ -14,7 +14,7 @@ defmodule Tanks.GameServer do
     GenServer.cast(name, :auto_update_state)
   end
 
-  def end(name) do
+  def terminate(name) do
     GenServer.stop(name)
   end
 

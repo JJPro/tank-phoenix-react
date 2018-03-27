@@ -73,13 +73,13 @@ defmodule Tanks.Entertainment.Room do
       Enum.any?(room.players, fn(p) -> not p.ready? end) ->
         {:error, %{reason: 'players are not ready'}}
       true ->
-        GameServer.start(Game.new(room.players), room.name})
+        GameServer.start(Game.new(room.players), room.name)
         {:ok, %{room | playing: true}}
     end
   end
 
   def end_game(room) do
-    GameServer.end(room.name)
+    GameServer.terminate(room.name)
     %{room | playing: false}
   end
 

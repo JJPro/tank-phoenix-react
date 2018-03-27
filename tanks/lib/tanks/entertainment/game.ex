@@ -115,7 +115,7 @@ defmodule Tanks.Entertainment.Game do
     |> update_location_of_missiles
   end
 
-  def get_player_from_uid(game, uid) do
+  def get_player_from_uid(uid) do
     Tanks.Accounts.get_user!(uid)
   end
 
