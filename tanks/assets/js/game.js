@@ -1,5 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import socket from './socket';
+import Konva from 'konva';
+import { Stage, Layer, Rect, Text } from 'react-konva';
 
 export default class Game extends Component{
   constructor(props) {
@@ -21,7 +23,10 @@ export default class Game extends Component{
   }
 
   render(){
-    return <div>Game World</div>
+
+    return <div>Game World
+    <input  onKeyDown={this.onKeyDown.bind(this)} />
+    </div>
   }
 
   // format game data as needed
@@ -49,8 +54,46 @@ export default class Game extends Component{
   /***
   send fire and move actions
   */
-  onKeyPress(e) {
-    console.log(e);
+  onKeyDown({key}) {
+    // console.log(key);
 
+    let direction = null;
+    let fire = false;
+    switch (key) {
+      case "w":
+      case "ArrowUp":
+        direction = "up";
+        break;
+      case "s":
+      case "ArrowDown":
+        direction = "down";
+        break;
+      case "a":
+      case "ArrowLeft":
+        direction = "left";
+        break;
+      case "d":
+      case "ArrowRight":
+        direction = "right";
+        break;
+      case "Enter":
+      case " ":
+      case "Shift":
+        fire = true;
+        break;
+      default:
+        break;
+    }
+
+    // console.log(direction);
+    // console.log(fire);
+    if (direction){
+      this.channel.push("move", {uid: window.user, direction: direction})
+          .receive("ok", this.gotView.bind(this));
+    }
+    if (fire){
+      this.channel.push("fire", {uid: window.user})
+          .receive("ok", this.gotView.bind(this));
+    }
   }
 }
