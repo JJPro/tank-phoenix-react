@@ -20,6 +20,8 @@ defmodule Tanks.Entertainment.Game do
 
     map = pick_a_map;
 
+    tanks = attach_images_to_tanks(tanks);
+
     %{
       canvas: %{width: width, height: height},
       tanks: tanks,
@@ -252,6 +254,12 @@ defmodule Tanks.Entertainment.Game do
       tank_thumbnail: player.tank_thumbnail,
     }
   end
+
+  defp attach_images_to_tanks(tanks) do
+    tanks
+    |> Enum.map(fn(t) -> %{t | image: t.player.tank_thumbnail} end)
+  end
+
 
   @doc """
   Randomly pick a map from predefined set of maps
