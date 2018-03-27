@@ -27,6 +27,7 @@ export default class Game extends Component{
   }
 
   componentWillMount(){
+    // setInterval(this.animate.bind(this), 50);
     this.animate();
   }
 
@@ -74,6 +75,12 @@ export default class Game extends Component{
   }
 
   animate() {
+
+    // this.channel.push("get_state")
+    //   .receive("ok", game => {
+    //     this.gotView(game);
+    //   });
+
     this.channel.push("get_state")
       .receive("ok", game => {
         this.gotView(game);
