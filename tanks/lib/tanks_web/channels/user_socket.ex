@@ -5,6 +5,7 @@ defmodule TanksWeb.UserSocket do
   channel "list_rooms", TanksWeb.ListRoomsChannel
   channel "game:*", TanksWeb.GameChannel
   channel "room:*", TanksWeb.RoomChannel
+  channel "chat:*", TanksWeb.ChatChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

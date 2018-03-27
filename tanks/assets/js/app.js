@@ -38,6 +38,36 @@ function init(){
   if (show_room_root){
     room_init(show_room_root);
   }
+
+  let chat_root = document.getElementById('chat');
+  if (chat_root) {
+    let channel = socket.channel(`chat:${window.room_name}`, {uid: window.user});
+
+    channel.join()
+      .receive("ok", resp => { console.log("Joined successfully", resp) })
+      .receive("error", resp => { console.log("Unable to join", resp) })
+
+    var ul = document.getElementById('msg-list');        // list of messages.
+    var msg = document.getElementById('msg');            // message input field
+
+    // "listen" for the [Enter] keypress event to send a message:
+    msg.addEventListener('keypress', function (event) {
+      if (event.keyCode == 13 && msg.value.length > 0) { // don't sent empty msg.
+        channel.push('shout', { // send the message to the server
+          uid: window.user,     // get value of "name" of person sending the message
+          message: msg.value    // get message text (value) from msg input field.
+        });
+        msg.value = '';         // reset the message input field for next message.
+      }
+    });
+
+    channel.on('shout_back', function (payload) { // listen to the 'shout' event
+      var li = document.createElement("li"); // creaet new list item DOM element
+      var name = payload.username || 'guest';    // get name from payload or set default
+      li.innerHTML = '<b>' + name + '</b>: ' + payload.message;
+      ul.appendChild(li);                    // append to list
+    });
+  }
 }
 
 $(init);
