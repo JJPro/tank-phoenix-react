@@ -56,8 +56,9 @@ export default class Game extends Component{
   }
 
   // format game data as needed
-  gotView({game}) {
+  gotView(game) {
     // console.log("got view: ", game);
+    console.log("got view", JSON.stringify(game));
     this.setState(game);
   }
 
@@ -72,7 +73,8 @@ export default class Game extends Component{
   animate() {
     this.channel.push("get_state")
       .receive("ok", game => {
-        this.setState(game);
+        console.log(">>>>>>>>", game);
+        this.gotView(game);
         requestAnimationFrame(this.animate.bind(this));
       });
   }
