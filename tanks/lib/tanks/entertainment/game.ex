@@ -5,7 +5,7 @@ defmodule Tanks.Entertainment.Game do
 
   alias Tanks.Entertainment.Components.{Missile, Tank, Steel, Brick, Map}
 
-  def new(players, width \\ 800, height \\ 800) do
+  def new(players, width \\ 26, height \\ 26) do
     tanks = case length(players) do
       2 -> [%Tank{x: 0, y: 0, orientation: :down, player: Enum.at(players, 0)},
             %Tank{x: width-2, y: height-2, orientation: :up, player: Enum.at(players, 1)}]
@@ -249,6 +249,7 @@ defmodule Tanks.Entertainment.Game do
       id: player.user.id,
       is_owner: player.owner?,
       is_ready: player.ready?,
+      tank_thumbnail: player.tank_thumbnail,
     }
   end
 

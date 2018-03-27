@@ -177,6 +177,7 @@ defmodule TanksWeb.RoomChannel do
       id: player.user.id,
       is_owner: player.owner?,
       is_ready: player.ready?,
+      tank_thumbnail: player.tank_thumbnail,
     }
   end
 
@@ -184,8 +185,8 @@ defmodule TanksWeb.RoomChannel do
   format room object to json format
   """
   defp room_data(room) do
-    # IO.puts '+++++++++++'
-    # IO.inspect room
+    IO.puts '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+    IO.inspect %{room: room}
     %{
       name: room.name,
       players: Enum.map(room.players, fn p -> player_data(p) end),

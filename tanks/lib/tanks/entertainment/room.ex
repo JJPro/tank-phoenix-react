@@ -6,16 +6,27 @@ defmodule Tanks.Entertainment.Room do
   def new(name, user) do
     %{
       name: name,
-      players: [%{user: user, ready?: false, owner?: true}],
+      players: [%{user: user, ready?: false, owner?: true, tank_thumbnail: "/images/tank-cyan.png"}],
       playing?: false,
     }
   end
 
   def add_player(room, user) do
+    urls = ["/images/tank-cyan.png",
+            "/images/tank-red.png",
+            "/images/tank-army-green.png",
+            "/images/tank-yellow.png",
+            "/images/tank-khaki.png",
+            "/images/tank-green.png",
+            "/images/tank-magenta.png",
+            "/images/tank-purple.png",]
+    thumbnail = Enum.at(urls, length(room.players))
+
+    # if user already exists in the room
     if get_player_from_user(room, user) do
       room
     else
-      %{room | players: [%{user: user, ready?: false, owner?: false} | room.players]}
+      %{room | players: [%{user: user, ready?: false, owner?: false, tank_thumbnail: thumbnail} | room.players]}
     end
   end
 
