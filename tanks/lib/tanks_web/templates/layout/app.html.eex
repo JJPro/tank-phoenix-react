@@ -31,14 +31,14 @@
             </li>
           <% end %>
           <li>
-            <span><%= link "Back To Home", to: page_path(@conn, :index) %></span>
+            <span><%= link "After Game, Back To Home.", to: page_path(@conn, :index) %></span>
           </li>
         </ul>
       </nav>
       <%= if @view_module == TanksWeb.PageView do %>
         <div id="banner-image"></div>
       <% end %>
-      <h1>Welcome to Tank Game! A 2~4 palyers Game!</h1>
+      <h3>Welcome to Tank Game! A 2~4 players Game!</h3>
     </div>
     <div class="container">
 

@@ -52,15 +52,15 @@ export default class Game extends Component{
       return <TankHPItem username={tank.player.name} pos={ii} hp={tank.hp}/>;
     });
 
-    let tank = _.find(destroyed_tanks, function(tank) {
-      return tank.player.id == window.user;
-    });
-
-    if (tank) {
-      window.alert("You are killed and now become the observer.");
-      this.channel.push("delete_a_destroyed_tank", {uid: window.user})
-          .receive("ok", this.gotView.bind(this));
-    }
+    // let tank = _.find(destroyed_tanks, function(tank) {
+    //   return tank.player.id == window.user;
+    // });
+    //
+    // if (tank) {
+    //   window.alert("You are killed and now become the observer.");
+    //   this.channel.push("delete_a_destroyed_tank", {uid: window.user})
+    //       .receive("ok", this.gotView.bind(this));
+    // }
 
     return (
       <div>
