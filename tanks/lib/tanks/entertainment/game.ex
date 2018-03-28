@@ -202,9 +202,9 @@ defmodule Tanks.Entertainment.Game do
 
     # if (length(game.missiles) > 0), do: IO.inspect {">>>>>>>>>>>>>>>>> handle_collisions", game.missiles}
     # filter out destroyed tanks
-    destroyed_tanks = Enum.filter(game.tanks, fn t -> t.hp == 0 end)
-    %{game | tanks: game.tanks -- destroyed_tanks, # remove destroyed tanks from the list
-             destroyed_tanks_last_frame: destroyed_tanks}
+    new_tanks = Enum.reject(game.tanks, fn t -> t.hp == 0 end)
+    %{game | tanks: new_tanks, # remove destroyed tanks from the list
+             destroyed_tanks_last_frame: game.tanks -- new_tanks}
   end
 
   @doc """
