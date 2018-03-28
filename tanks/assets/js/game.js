@@ -12,6 +12,8 @@ export default class Game extends Component{
     super(props);
 
     this.channel = props.channel;
+    window.game_channel = this.channel;
+    window.game = this.state;
     this.gameover = false;
     this.state = {
       canvas: {width: 0, height: 0},
