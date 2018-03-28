@@ -318,7 +318,7 @@ defmodule Tanks.Entertainment.Game do
      }
   """
   defp pick_a_map do
-    map = Map.random_a_game_map()
+    {:ok, map} = Map.random_a_game_map()
     %{map | bricks: Enum.map(map.bricks, fn b -> %Brick{x: b.x, y: b.y} end),
             steels: Enum.map(map.steels, fn s -> %Steel{x: s.x, y: s.y} end)}
   end
@@ -329,7 +329,7 @@ defmodule Tanks.Entertainment.Game do
     new_tank_list = Enum.filter(game.destroyed_tanks_last_frame, fn(x) ->
       x.player.id != uid
     end)
-    
+
     %{game | destroyed_tanks_last_frame: new_tank_list}
   end
 end

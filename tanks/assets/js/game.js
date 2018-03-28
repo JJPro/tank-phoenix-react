@@ -167,5 +167,5 @@ export default class Game extends Component{
 function TankHPItem(props) {
   let player = props.username;
   let hp = props.hp;
-  return <div className="row font-weight-bold text-warning"><span className="text">{player} remain HP is: {hp}</span></div>;
+  return <div className="row font-weight-bold text-warning"><span className="text h3">{player} remain HP is: {hp}</span></div>;
 }

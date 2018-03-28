@@ -6,7 +6,6 @@
 
 <div class="row">
   <div id="room" class="col-10"></div>
-
   <div id="chat" class="col-2">
     <ul id="msg-list" class="row" style="list-style: none; min-height:400px; min-width:200px; border: 1px solid #e5e5e5; margin: 10px; padding: 10px; display: block;">
     </ul>

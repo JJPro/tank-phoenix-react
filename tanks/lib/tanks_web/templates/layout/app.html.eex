@@ -30,6 +30,9 @@
               <%= link "Sign in", to: auth_path(@conn, :index), class: "btn btn-light" %>
             </li>
           <% end %>
+          <li>
+            <span><%= link "Back To Home", to: page_path(@conn, :index) %></span>
+          </li>
         </ul>
       </nav>
       <%= if @view_module == TanksWeb.PageView do %>
