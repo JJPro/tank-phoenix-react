@@ -11,7 +11,7 @@ defmodule TanksWeb.ListRoomsChannel do
   :: {:ok, %{rooms: list}}
   """
   def join("list_rooms", payload, socket) do
-    IO.puts ">>>>>>> joining list rooms"
+    # IO.puts ">>>>>>> joining list rooms"
     if authorized?(payload) do
       # collect all rooms
       # get status of all rooms
@@ -22,7 +22,7 @@ defmodule TanksWeb.ListRoomsChannel do
         Tanks.RoomStore.list # get all rooms [%{name:, room:}]
         |> Enum.map(fn %{name: name, room: room} ->
           %{name: name, status: Room.get_status(room)} end)
-      IO.inspect rooms
+      # IO.inspect rooms
       {:ok, %{rooms: rooms}, socket}
     else
       {:error, %{reason: "unauthorized"}}

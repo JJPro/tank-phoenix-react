@@ -30,7 +30,7 @@ class Input extends Component {
       fetch(url)
         .then((resp) => resp.json())
         .then((json) => {
-          console.log(json.data);
+          // console.log(json.data);
           this.setState({room_status: json.data.room_status});
         }
       );
