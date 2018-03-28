@@ -49,7 +49,7 @@ export default class Game extends Component{
     };
 
     let tankhp_list = _.map(this.state.tanks, (tank, ii) => {
-      return <TankHPItem username={tank.player.name} pos={ii} hp={tank.hp}/>;
+      return <TankHPItem username={tank.player.name} key={ii} hp={tank.hp} />;
     });
 
     // let tank = _.find(destroyed_tanks, function(tank) {
@@ -113,8 +113,13 @@ export default class Game extends Component{
   /***
   send fire and move actions
   */
-  onKeyDown({key}) {
+  onKeyDown(e) {
     // console.log(key);
+
+    if (!this.is_player())
+      return;
+
+    let key = e.key
 
     let direction = null;
     let fire = false;
@@ -147,13 +152,21 @@ export default class Game extends Component{
     // console.log(direction);
     // console.log(fire);
     if (direction){
+      e.preventDefault();
       this.channel.push("move", {uid: window.user, direction: direction})
           .receive("ok", this.gotView.bind(this));
     }
     if (fire){
+      e.preventDefault();
       this.channel.push("fire", {uid: window.user})
           .receive("ok", this.gotView.bind(this));
     }
+  }
+
+  is_player() {
+    let uid = window.user;
+    let tanks = this.state.tanks;
+    return _.contains(tanks.map( (t) => t.player.id), uid);
   }
 
   testData(){
