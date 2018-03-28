@@ -18,7 +18,7 @@ defmodule TanksWeb.GameChannel do
       name = String.to_atom(name)
       # IO.inspect %{name: name, game: GenServer.whereis(name)}
 
-      IO.puts ">>>>>>>>>>> trying to join a game"
+      # IO.puts ">>>>>>>>>>> trying to join a game"
       # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
       # game = GenServer.call(name, :get_state)
       if GenServer.whereis(name) do

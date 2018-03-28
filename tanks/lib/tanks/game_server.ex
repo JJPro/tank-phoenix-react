@@ -33,13 +33,9 @@ defmodule Tanks.GameServer do
 ## Server Implementations
   def handle_cast(:auto_update_state, {servername, game}) do
     # IO.puts "@@@@@@@@@@@@@@@ auto_update_state called"
-    Process.sleep(40) # 50 * 20 = 1000 => 20 FPS
+    Process.sleep(50) # 50 * 20 = 1000 => 20 FPS
     GenServer.cast(servername, :auto_update_state)
-    if length(game.missiles) > 0 do
-      {:noreply, {servername, Game.next_state(game)}}
-    else
-      {:noreply, {servername, game}}
-    end
+    {:noreply, {servername, Game.next_state(game)}}
   end
 
   @doc """
