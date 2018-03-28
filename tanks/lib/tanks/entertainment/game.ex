@@ -51,7 +51,8 @@ defmodule Tanks.Entertainment.Game do
   def client_view(game) do
     # IO.inspect {"missiles", game.missiles}
     # format player to json format with player_data(player)
-    %{game | tanks: Enum.map(game.tanks, fn t -> %Tank{t | player: player_data(t.player)} end) }
+    %{game | tanks: jsonify_tanks(game.tanks),
+             destroyed_tanks_last_frame: jsonify_tanks(game.destroyed_tanks_last_frame)}
   end
 
   @doc """
@@ -187,7 +188,13 @@ defmodule Tanks.Entertainment.Game do
             # decrease tank hp, and delete and add to destroyed_list if new hp = 0
             new_tanks = game.tanks
             |> Enum.map(fn t -> if collide_missile_tank?(m,t), do: %Tank{t | hp: t.hp-1}, else: t end) # decrease tank hp
-            %{game | missiles: new_missiles, tanks: new_tanks}
+            |> Enum.reject(fn t -> t.hp == 0 end) # filter out destroyed tanks
+            game = %{game | missiles: new_missiles, tanks: new_tanks, destroyed_tanks_last_frame: game.tanks -- new_tanks}
+
+            # IO.puts ">>>>>>>>>>>> HIT TANK"
+            # IO.inspect {">>>>>>>>>>>>>>>", length(game.tanks)}
+            game
+
         hit_other_missiles?(m, game.missiles) ->
           # IO.puts ">>>>>>>>>> HIT Other MISSILE"
 
@@ -200,11 +207,6 @@ defmodule Tanks.Entertainment.Game do
       end
     end)
 
-    # if (length(game.missiles) > 0), do: IO.inspect {">>>>>>>>>>>>>>>>> handle_collisions", game.missiles}
-    # filter out destroyed tanks
-    new_tanks = Enum.reject(game.tanks, fn t -> t.hp == 0 end)
-    %{game | tanks: new_tanks, # remove destroyed tanks from the list
-             destroyed_tanks_last_frame: game.tanks -- new_tanks}
   end
 
   @doc """
@@ -302,6 +304,10 @@ defmodule Tanks.Entertainment.Game do
       is_ready: player.ready?,
       tank_thumbnail: player.tank_thumbnail,
     }
+  end
+
+  defp jsonify_tanks(tanks) do
+    Enum.map(tanks, fn t -> %Tank{t | player: player_data(t.player)} end)
   end
 
   defp attach_images_to_tanks(tanks) do

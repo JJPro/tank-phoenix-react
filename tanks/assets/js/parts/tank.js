@@ -16,7 +16,7 @@ export default class Tank extends Component{
     if (orientation != "up")
       image.src = image.src.replace(".png", `-${orientation}.png`);
 
-    console.log(image.src);
+    // console.log(image.src);
     image.onload = () => {
       this.setState({image: image})
     }
