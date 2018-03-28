@@ -102,7 +102,7 @@ export default class Game extends Component{
 
     this.channel.on("gameover", () => {
       this.gameover = true;
-      this.displayGameOver();
+      // this.displayGameOver();
       setTimeout(()=>this.channel.push("game_ended"), 5000);
     });
   }

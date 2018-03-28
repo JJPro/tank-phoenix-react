@@ -144,7 +144,7 @@ defmodule TanksWeb.RoomChannel do
 
   def handle_in("end", payload, %{assigns: %{name: name}} = socket) do
     room = Room.end_game(RoomStore.load(name))
-    IO.inspect {">>>>>>>>>>>>>> ROOM AFTER ENDED", room}
+    # IO.inspect {">>>>>>>>>>>>>> ROOM AFTER ENDED", room}
     RoomStore.save(name, room)
     # socket = assign(socket, :room, room)
     # broadcast change to all players and observers

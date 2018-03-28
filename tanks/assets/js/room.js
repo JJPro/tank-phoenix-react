@@ -32,7 +32,7 @@ class Room extends Component {
   }
 
   gotView({room}) {
-    console.log(room.players);
+    // console.log(room.players);
     this.setState(room)
   }
 
@@ -107,12 +107,12 @@ class Room extends Component {
     }
 
     this.channel.on("update_room", data => {
-      console.log("update room", data);
-      console.log("room playing?", room.is_playing);
+      // console.log("update room", data);
+      // console.log("room playing?", room.is_playing);
 
-    this.channel.on("gameover", () => {
-      this.channel.push("end");
-    });
+      this.channel.on("gameover", () => {
+        this.channel.push("end");
+      });
 
       // this.channel.push("info", {when: "room updated"})
       //     .receive("ok", data => {
