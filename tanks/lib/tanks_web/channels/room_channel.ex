@@ -155,13 +155,6 @@ defmodule TanksWeb.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("info", payload, %{assigns: %{name: name}} = socket) do
-    # IO.puts "+++++++++++ info"
-    # IO.inspect payload
-    # IO.inspect %{stored_room: length(RoomStore.load(name).players)}
-    {:reply, {:ok, %{stored_room: length(RoomStore.load(name).players)}}, socket}
-  end
-
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

@@ -11,7 +11,7 @@ defmodule Tanks.GameServer do
     # state is {name:, game: }
     # we use room name as our GenServer server name
     name = String.to_atom(name)
-    GenServer.start_link(__MODULE__, {name, game}, name: name)
+    GenServer.start(__MODULE__, {name, game}, name: name)
     GenServer.cast(name, :auto_update_state)
   end
 

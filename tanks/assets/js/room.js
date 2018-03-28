@@ -101,21 +101,12 @@ class Room extends Component {
         }
       );
 
-      // this.channel.push("info", {when: "after enter"})
-      //     .receive("ok", data => {
-      //       console.log("info after enter", data);
-      //     });
     }
 
     this.channel.on("update_room", data => {
       // console.log("update room", data);
       // console.log("room playing?", room.is_playing);
 
-
-      // this.channel.push("info", {when: "room updated"})
-      //     .receive("ok", data => {
-      //       console.log("info room updated", data);
-      //     });
       this.gotView(data);
     });
     this.channel.on("gameover", () => {
@@ -124,15 +115,7 @@ class Room extends Component {
   }
 
   onReady(){
-    // this.channel.push("info", {when: "before ready"})
-    //     .receive("ok", data => {
-    //       console.log("info before ready", data);
-    //     });
     this.channel.push("ready", {uid: window.user});
-    // this.channel.push("info", {when: "after ready"})
-    //   .receive("ok", data => {
-    //     console.log("info after ready", data);
-    // });
   }
 
   onCancel(){
