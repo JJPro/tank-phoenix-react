@@ -37,7 +37,7 @@
       </nav>
       <%= if @view_module == TanksWeb.PageView do %>
         <div id="banner-image"></div>
-      <%= end %>
+      <% end %>
       <h1>Welcome to Tank Game! A 2~4 palyers Game!</h1>
     </div>
     <div class="container">

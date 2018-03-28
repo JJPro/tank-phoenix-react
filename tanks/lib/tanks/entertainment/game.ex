@@ -21,7 +21,7 @@ defmodule Tanks.Entertainment.Game do
             %Tank{x: width-2, y: 0, orientation: :left, player: Enum.at(players, 3)}, ]
     end
 
-    map = pick_a_map;
+    map = pick_a_map();
 
     tanks = attach_images_to_tanks(tanks);
 
