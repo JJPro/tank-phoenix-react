@@ -110,15 +110,15 @@ class Room extends Component {
       // console.log("update room", data);
       // console.log("room playing?", room.is_playing);
 
-      this.channel.on("gameover", () => {
-        this.channel.push("end");
-      });
 
       // this.channel.push("info", {when: "room updated"})
       //     .receive("ok", data => {
       //       console.log("info room updated", data);
       //     });
       this.gotView(data);
+    });
+    this.channel.on("gameover", () => {
+      this.channel.push("end");
     });
   }
 
