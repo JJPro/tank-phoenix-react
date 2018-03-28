@@ -22,7 +22,6 @@ class Room extends Component {
 
     this.channel = props.channel;
     window.channel = this.channel; // TODO: attach to window for testing
-    window.room = this.state; // attach to window for testing
     this.state = {
       name: "",
       players: [],
@@ -33,6 +32,7 @@ class Room extends Component {
   }
 
   gotView({room}) {
+    window.room = room; // attach to window for testing
     // console.log(room.players);
     this.setState(room)
   }

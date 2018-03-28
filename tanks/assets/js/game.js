@@ -13,7 +13,6 @@ export default class Game extends Component{
 
     this.channel = props.channel;
     window.game_channel = this.channel;
-    window.game = this.state;
     this.gameover = false;
     this.state = {
       canvas: {width: 0, height: 0},
@@ -83,6 +82,7 @@ export default class Game extends Component{
 
   // format game data as needed
   gotView(game) {
+    window.game = game;
     // console.log(JSON.stringify(game));
     // console.log(game);
     // if (game.tanks.length == 1)
