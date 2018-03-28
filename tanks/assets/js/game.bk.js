@@ -28,7 +28,7 @@ export default class Game extends Component{
   }
 
   render(){
-    console.log(this.state);
+    // console.log(this.state);
     // {canvas, tanks, missiles, bricks, steels} = this.state;
     let canvas = this.state.canvas,
         tanks = this.state.tanks,
@@ -58,7 +58,7 @@ export default class Game extends Component{
   // format game data as needed
   gotView(game) {
     // console.log("got view: ", game);
-    console.log("got view", JSON.stringify(game));
+    // console.log("got view", JSON.stringify(game));
     this.setState(game);
   }
 
@@ -73,7 +73,7 @@ export default class Game extends Component{
   animate() {
     this.channel.push("get_state")
       .receive("ok", game => {
-        console.log(">>>>>>>>", game);
+        // console.log(">>>>>>>>", game);
         this.gotView(game);
         requestAnimationFrame(this.animate.bind(this));
       });

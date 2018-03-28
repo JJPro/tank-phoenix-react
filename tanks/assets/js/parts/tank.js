@@ -8,10 +8,15 @@ export default class Tank extends Component{
     this.state = {image: null}
   }
 
-  componentDidMount(){
+  componentWillReceiveProps(){
     // console.log({thumbnail: this.props.tank.player.tank_thumbnail});
     let image = new window.Image();
     image.src = this.props.tank.player.tank_thumbnail;
+    let orientation = this.props.tank.orientation;
+    if (orientation != "up")
+      image.src = image.src.replace(".png", `-${orientation}.png`);
+
+    console.log(image.src);
     image.onload = () => {
       this.setState({image: image})
     }
@@ -23,23 +28,7 @@ export default class Tank extends Component{
         height = this.props.tank.height,
         unit = this.props.unit,
         rotation = 0;
-    switch (this.props.tank.orientation) {
-      case "up":
-        rotation = 0;
-        break;
-      case "right":
-        rotation = 90;
-        break;
-      case "down":
-        rotation = 180;
-        break;
-      case "left":
-        rotation = -90;
-        break;
-      default:
-
-    }
     // console.log({x: x, y: y});
-    return (<Image image={this.state.image} width={width*unit} height={height*unit} x={x*unit} y={y*unit} rotation={rotation} offset={{x: width/2, y: height/2}} />);
+    return (<Image image={this.state.image} width={width*unit} height={height*unit} x={x*unit} y={y*unit}  />);
   }
 }

@@ -49,6 +49,7 @@ defmodule Tanks.Entertainment.Game do
        }
   """
   def client_view(game) do
+    # IO.inspect {"missiles", game.missiles}
     # format player to json format with player_data(player)
     %{game | tanks: Enum.map(game.tanks, fn t -> %Tank{t | player: player_data(t.player)} end) }
   end
@@ -92,7 +93,7 @@ defmodule Tanks.Entertainment.Game do
   def fire(game, player) do
     # IO.inspect %{event: "fireing", game: game, player: player}
     tank = game.tanks |> Enum.find(fn t -> t.player == player end)
-    IO.inspect %{event: "fireing", tank: tank}
+    # IO.inspect %{event: "fireing", tank: tank}
 
     missile = case tank.orientation do
       :up -> %Missile{x: tank.x + tank.width/2, y: tank.y, direction: :up}
@@ -137,10 +138,10 @@ defmodule Tanks.Entertainment.Game do
                     |> Enum.map(
                       fn m ->
                         case m.direction do
-                          :up -> %{m | m: m.y - m.speed}
-                          :down -> %{m | m: m.y + m.speed}
-                          :left -> %{m | m: m.x - m.speed}
-                          :right -> %{m | m: m.x + m.speed}
+                          :up -> %{m | y: m.y - m.speed}
+                          :down -> %{m | y: m.y + m.speed}
+                          :left -> %{m | x: m.x - m.speed}
+                          :right -> %{m | x: m.x + m.speed}
                         end
                       end )
                     # remove missiles out of view:
@@ -170,22 +171,36 @@ defmodule Tanks.Entertainment.Game do
     game = game.missiles |> Enum.reduce(game, fn (m, game) ->
       cond do
         hit?(m, game.bricks) ->
+          # IO.puts ">>>>>>>>>> HIT Brick"
+
             new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
             new_bricks = Enum.reject(game.bricks, fn b -> collide?(b, m) end)
             %{game | missiles: new_missiles, bricks: new_bricks}
+        hit?(m, game.steels) ->
+          # IO.puts ">>>>>>>>>> HIT Steel"
+
+            new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
+            %{game | missiles: new_missiles}
         hit_tanks?(m, game.tanks) ->
+          # IO.puts ">>>>>>>>>> HIT Tank"
             new_missiles = Enum.reject(game.missiles, fn mm -> mm == m end)
             # decrease tank hp, and delete and add to destroyed_list if new hp = 0
             new_tanks = game.tanks
             |> Enum.map(fn t -> if collide_missile_tank?(m,t), do: %Tank{t | hp: t.hp-1}, else: t end) # decrease tank hp
             %{game | missiles: new_missiles, tanks: new_tanks}
-        hit?(m, game.missiles) ->
+        hit_other_missiles?(m, game.missiles) ->
+          # IO.puts ">>>>>>>>>> HIT Other MISSILE"
+
             new_missiles = Enum.reject(game.missiles, fn mm -> collide?(mm, m) end)
             %{game | missiles: new_missiles}
-        true -> game # no collision with this missile detected
+        true ->
+          # IO.puts ">>>>>>>>>> NO HIT"
+
+          game # no collision with this missile detected
       end
     end)
 
+    # if (length(game.missiles) > 0), do: IO.inspect {">>>>>>>>>>>>>>>>> handle_collisions", game.missiles}
     # filter out destroyed tanks
     destroyed_tanks = Enum.filter(game.tanks, fn t -> t.hp == 0 end)
     %{game | tanks: game.tanks -- destroyed_tanks, # remove destroyed tanks from the list
@@ -198,6 +213,12 @@ defmodule Tanks.Entertainment.Game do
   """
   defp hit?(missile, obstacles) do
     Enum.any?(obstacles, fn o -> collide?(missile, o) end)
+  end
+
+  defp hit_other_missiles?(missile, missiles) do
+    missiles
+    |> Enum.reject(fn m -> m == missile end)
+    |> Enum.any?(fn m -> collide?(missile, m) end)
   end
 
   defp hit_tanks?(missile, tanks) do
@@ -218,7 +239,9 @@ defmodule Tanks.Entertainment.Game do
   defp collide?(a, b) do
     # abs((a.x + a.width/2) - (b.x + b.width/2)) <= (a.width + b.width) / 2 &&
     # abs((a.y + a.height/2) - (b.y + b.height/2)) <= (a.height + b.height) / 2
-    :math.pow(a.x-b.x, 2) + :math.pow(a.y-b.y, 2) <= :math.pow(a.width+b.width, 2)
+    :math.pow((a.x+a.width/2)-(b.x+b.width/2), 2) + :math.pow((a.y+a.height/2)-(b.y+b.height/2), 2) <= :math.pow(a.width+b.width, 2)
+
+
   end
 
   defp can_tank_move?(:up, tank, game) do
@@ -288,7 +311,7 @@ defmodule Tanks.Entertainment.Game do
 
 
   @doc """
-  Randomly pick a map from predefined set of maps
+  Randomly pick a map from predefined s et of maps
   :: %{
         bricks: list of %Brick{x: xx, y: yy},
         steels: list of %Steel{x: xx, y: yy}

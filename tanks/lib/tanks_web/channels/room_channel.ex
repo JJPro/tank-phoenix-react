@@ -38,7 +38,7 @@ defmodule TanksWeb.RoomChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("ready", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
-    IO.puts ">>>>> ready"
+    # IO.puts ">>>>> ready"
 
     user = Accounts.get_user!(uid)
     room = Room.player_ready( RoomStore.load(name), user )
@@ -47,7 +47,7 @@ defmodule TanksWeb.RoomChannel do
     RoomStore.save(name, room)
     # socket = assign(socket, :room, room)
 
-    IO.inspect %{user: user.id, new_room: length(room.players)}
+    # IO.inspect %{user: user.id, new_room: length(room.players)}
 
     # broadcast change to all players and observers
     broadcast socket, "update_room", %{room: room_data(room)}
@@ -155,9 +155,9 @@ defmodule TanksWeb.RoomChannel do
   end
 
   def handle_in("info", payload, %{assigns: %{name: name}} = socket) do
-    IO.puts "+++++++++++ info"
-    IO.inspect payload
-    IO.inspect %{stored_room: length(RoomStore.load(name).players)}
+    # IO.puts "+++++++++++ info"
+    # IO.inspect payload
+    # IO.inspect %{stored_room: length(RoomStore.load(name).players)}
     {:reply, {:ok, %{stored_room: length(RoomStore.load(name).players)}}, socket}
   end
 
@@ -185,8 +185,8 @@ defmodule TanksWeb.RoomChannel do
   format room object to json format
   """
   defp room_data(room) do
-    IO.puts '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-    IO.inspect %{room: room}
+    # IO.puts '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+    # IO.inspect %{room: room}
     %{
       name: room.name,
       players: Enum.map(room.players, fn p -> player_data(p) end),

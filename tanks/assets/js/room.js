@@ -107,24 +107,25 @@ class Room extends Component {
 
     this.channel.on("update_room", data => {
       // console.log("update room", data);
-      this.channel.push("info", {when: "room updated"})
-          .receive("ok", data => {
-            console.log("info room updated", data);
-          });
+      // this.channel.push("info", {when: "room updated"})
+      //     .receive("ok", data => {
+      //       console.log("info room updated", data);
+      //     });
       this.gotView(data);
     });
   }
 
   onReady(){
-    this.channel.push("info", {when: "before ready"})
-        .receive("ok", data => {
-          console.log("info before ready", data);
-        });
+    // this.channel.push("info", {when: "before ready"})
+    //     .receive("ok", data => {
+    //       console.log("info before ready", data);
+    //     });
     this.channel.push("ready", {uid: window.user});
-    this.channel.push("info", {when: "after ready"})
-        .receive("ok", data => {
-          console.log("info after ready", data);
-        });  }
+    // this.channel.push("info", {when: "after ready"})
+    //   .receive("ok", data => {
+    //     console.log("info after ready", data);
+    // });
+  }
 
   onCancel(){
     this.channel.push("cancel", {uid: window.user});
