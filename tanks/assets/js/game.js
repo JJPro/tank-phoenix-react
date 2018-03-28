@@ -64,6 +64,7 @@ export default class Game extends Component{
 
     return (
       <div>
+        <div display="block">{tankhp_list}</div>
         <Stage width={canvas.width * unit} height={canvas.height * unit} style={style}>
           <Layer>
             {tanks.map( t => <Tank tank={t} unit={unit} key={t.player.id} />)}
@@ -72,7 +73,6 @@ export default class Game extends Component{
             {missiles.map( (m,i) => <Missile missile={m} unit={unit} key={i} />)}
           </Layer>
         </Stage>
-        <div display="block">{tankhp_list}</div>
       </div>
     );
   }
@@ -114,8 +114,6 @@ export default class Game extends Component{
   send fire and move actions
   */
   onKeyDown(e) {
-    // console.log(key);
-
     if (!this.is_player())
       return;
 
@@ -124,39 +122,31 @@ export default class Game extends Component{
     let direction = null;
     let fire = false;
     switch (key) {
-      case "w":
       case "ArrowUp":
         direction = "up";
         break;
-      case "s":
       case "ArrowDown":
         direction = "down";
         break;
-      case "a":
       case "ArrowLeft":
         direction = "left";
         break;
-      case "d":
       case "ArrowRight":
         direction = "right";
         break;
-      case "Enter":
       case " ":
-      case "Shift":
         fire = true;
         break;
       default:
         break;
     }
 
-    // console.log(direction);
-    // console.log(fire);
-    if (direction){
+    if (direction) {
       e.preventDefault();
       this.channel.push("move", {uid: window.user, direction: direction})
           .receive("ok", this.gotView.bind(this));
     }
-    if (fire){
+    if (fire) {
       e.preventDefault();
       this.channel.push("fire", {uid: window.user})
           .receive("ok", this.gotView.bind(this));
@@ -180,5 +170,5 @@ export default class Game extends Component{
 function TankHPItem(props) {
   let player = props.username;
   let hp = props.hp;
-  return <div className="row font-weight-bold text-warning"><span className="text h3">{player} remain HP is: {hp}</span></div>;
+  return <div className="row font-weight-bold text-warning"><span className="text h5">{player} remain HP is: {hp}</span></div>;
 }

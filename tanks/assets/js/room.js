@@ -39,7 +39,7 @@ class Room extends Component {
   //    if playing -> render game,
   //    otherwise, render room.
   render(){
-    if (this.state.is_playing){
+    if (this.state.is_playing) {
       return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
     } else {
 
