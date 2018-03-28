@@ -90,6 +90,7 @@ defmodule Tanks.Entertainment.Room do
   end
 
   def end_game(room) do
+    IO.puts ">>>>>> TERMINATING GAME"
     GameServer.terminate(room.name)
     %{room | playing?: false}
   end

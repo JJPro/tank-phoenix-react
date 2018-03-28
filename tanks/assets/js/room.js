@@ -99,14 +99,16 @@ class Room extends Component {
         }
       );
 
-      this.channel.push("info", {when: "after enter"})
-          .receive("ok", data => {
-            console.log("info after enter", data);
-          });
+      // this.channel.push("info", {when: "after enter"})
+      //     .receive("ok", data => {
+      //       console.log("info after enter", data);
+      //     });
     }
 
     this.channel.on("update_room", data => {
-      // console.log("update room", data);
+      console.log("update room", data);
+      console.log("room playing?", room.is_playing);
+
       // this.channel.push("info", {when: "room updated"})
       //     .receive("ok", data => {
       //       console.log("info room updated", data);

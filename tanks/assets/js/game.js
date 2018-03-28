@@ -140,7 +140,6 @@ export default class Game extends Component{
       case "ArrowRight":
         direction = "right";
         break;
-      case "Enter":
       case " ":
       case "Shift":
         fire = true;

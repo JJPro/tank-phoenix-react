@@ -20,6 +20,7 @@ defmodule Tanks.GameServer do
   end
 
   def terminate(name) do
+    name = if is_atom(name), do: name, else: String.to_atom(name)
     GenServer.stop(name)
   end
 
