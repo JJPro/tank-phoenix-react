@@ -58,4 +58,9 @@ defmodule Tanks.GameServer do
   def handle_cast({:move, player, direction}, {servername, game}) do
     {:noreply, {servername, Game.move(game, player, direction)}}
   end
+
+  def handle_cast({:delete_tank, player_id}, {servername, game}) do
+    {:noreply, {servername, Game.remove_destroyed_tank(game, player_id)}}
+  end
+
 end

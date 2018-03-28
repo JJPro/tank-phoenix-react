@@ -18,6 +18,7 @@ export default class Game extends Component{
       missiles: [],
       bricks: [],
       steels: [],
+      destroyed_tanks_last_frame: [],
     };
 
     // this.testData();
@@ -35,7 +36,8 @@ export default class Game extends Component{
         tanks = this.state.tanks,
         missiles = this.state.missiles,
         bricks = this.state.bricks,
-        steels = this.state.steels;
+        steels = this.state.steels,
+        destroyed_tanks = this.state.destroyed_tanks_last_frame;
 
     // console.log({canvas: canvas});
     let unit = 26;
@@ -45,16 +47,32 @@ export default class Game extends Component{
       height: canvas.height * unit,
     };
 
+    let tankhp_list = _.map(this.state.tanks, (tank, ii) => {
+      return <TankHPItem username={tank.player.name} pos={ii} hp={tank.hp}/>;
+    });
+
+    let tank = _.find(destroyed_tanks, function(tank) {
+      return tank.player.id == window.user;
+    });
+
+    if (tank) {
+      window.alert("You are killed and now become the observer.");
+      this.channel.push("delete_a_destroyed_tank", {uid: window.user})
+          .receive("ok", this.gotView.bind(this));
+    }
 
     return (
-      <Stage width={canvas.width * unit} height={canvas.height * unit} style={style}>
-        <Layer>
-          {tanks.map( t => <Tank tank={t} unit={unit} key={t.player.id} />)}
-          {bricks.map( (b,i) => <Brick brick={b} unit={unit} key={i} />)}
-          {steels.map( (s,i) => <Steel steel={s} unit={unit} key={i} />)}
-          {missiles.map( (m,i) => <Missile missile={m} unit={unit} key={i} />)}
-        </Layer>
-      </Stage>
+      <div>
+        <Stage width={canvas.width * unit} height={canvas.height * unit} style={style}>
+          <Layer>
+            {tanks.map( t => <Tank tank={t} unit={unit} key={t.player.id} />)}
+            {bricks.map( (b,i) => <Brick brick={b} unit={unit} key={i} />)}
+            {steels.map( (s,i) => <Steel steel={s} unit={unit} key={i} />)}
+            {missiles.map( (m,i) => <Missile missile={m} unit={unit} key={i} />)}
+          </Layer>
+        </Stage>
+        <div display="block">{tankhp_list}</div>
+      </div>
     );
   }
 
@@ -137,4 +155,10 @@ export default class Game extends Component{
     this.state = data;
     // console.log({tanks: data.tanks, missiles: data.missiles});
   }
+}
+
+function TankHPItem(props) {
+  let player = props.username;
+  let hp = props.hp;
+  return <div className="row font-weight-bold text-warning"><span className="text">{player} remain HP is: {hp}</span></div>;
 }

@@ -63,6 +63,15 @@ defmodule TanksWeb.GameChannel do
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 
+  @doc """
+    delete the tank which has been killed and in the destroyed_tanks_last_frame list
+  """
+  def handle_in("delete_a_destroyed_tank", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
+    game = GenServer.call(name, :get_state)
+    GenServer.cast(name, {:delete_tank, uid})
+    broadcast socket, "update_game", %{game: Game.client_view(game)}
+    {:reply, {:ok, Game.client_view(game)}, socket}
+  end
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do

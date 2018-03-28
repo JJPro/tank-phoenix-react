@@ -299,4 +299,14 @@ defmodule Tanks.Entertainment.Game do
     %{map | bricks: Enum.map(map.bricks, fn b -> %Brick{x: b.x, y: b.y} end),
             steels: Enum.map(map.steels, fn s -> %Steel{x: s.x, y: s.y} end)}
   end
+
+  @doc """
+  """
+  def remove_destroyed_tank(game, uid) do
+    new_tank_list = Enum.filter(game.destroyed_tanks_last_frame, fn(x) ->
+      x.player.id != uid
+    end)
+    
+    %{game | destroyed_tanks_last_frame: new_tank_list}
+  end
 end
