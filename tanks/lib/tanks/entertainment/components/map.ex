@@ -174,7 +174,7 @@ defmodule Tanks.Entertainment.Components.Map do
                       %{x: 23, y: 22}, %{x: 23, y: 23}, %{x: 24, y: 10}, %{x: 24, y: 14}, %{x: 25, y: 10}, %{x: 25, y: 14}]
             }
     maps = [map1, map2, map3, map4, map5]
-    :rand.seed(:exsplus, {101, 102, 103})
-    Enum.random(maps)
+    Enum.shuffle(maps)
+    |> Enum.fetch(1)
   end
 end

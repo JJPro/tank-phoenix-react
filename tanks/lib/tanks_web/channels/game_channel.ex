@@ -47,7 +47,7 @@ defmodule TanksWeb.GameChannel do
     game = GenServer.call(name, :get_state)
     player = Game.get_player_from_uid(game, uid)
     GenServer.cast(name, {:fire, player})
-    broadcast socket, "update_game", %{game: Game.client_view(game)}
+    # broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 
@@ -59,7 +59,7 @@ defmodule TanksWeb.GameChannel do
     game = GenServer.call(name, :get_state)
     player = Game.get_player_from_uid(game, uid)
     GenServer.cast(name, {:move, player, String.to_atom(direction)})
-    broadcast socket, "update_game", %{game: Game.client_view(game)}
+    # broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 
