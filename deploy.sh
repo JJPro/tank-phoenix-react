@@ -36,7 +36,7 @@ if [ -d ~/www/tanks ]; then
 fi
 
 mkdir -p ~/www/tanks
-REL_TAR=~/src/tanks/_build/prod/rel/tanks/releases/0.0.1/tanks.tar.gz
+REL_TAR=~/src/tanks/tanks/_build/prod/rel/tanks/releases/0.0.1/tanks.tar.gz
 (cd ~/www/tanks && tar xzvf $REL_TAR)
 
 crontab - <<CRONTAB
