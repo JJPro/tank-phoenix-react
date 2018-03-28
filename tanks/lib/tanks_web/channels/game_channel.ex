@@ -18,10 +18,15 @@ defmodule TanksWeb.GameChannel do
       name = String.to_atom(name)
       # IO.inspect %{name: name, game: GenServer.whereis(name)}
 
+      IO.puts ">>>>>>>>>>> trying to join a game"
       # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
-      game = GenServer.call(name, :get_state)
-      # IO.inspect {">>>>>>>>>>>> game", game}
-      {:ok, Game.client_view(game), assign(socket, :name, name)}
+      # game = GenServer.call(name, :get_state)
+      if GenServer.whereis(name) do
+        game = GenServer.call(name, :get_state)
+        {:ok, Game.client_view(game), assign(socket, :name, name)}
+      else
+        {:error, %{reason: "terminated"}}
+      end
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -34,7 +39,16 @@ defmodule TanksWeb.GameChannel do
   """
   def handle_in("get_state", _payload, %{assigns: %{name: name}} = socket) do
     game = GenServer.call(name, :get_state)
+    if length(game.tanks) == 1 do
+      broadcast socket, "gameover", %{}
+    end
     {:reply, {:ok, Game.client_view(game)}, socket}
+  end
+
+  def handle_in("game_ended", _, %{assigns: %{name: name}} = socket) do
+
+    TanksWeb.Endpoint.broadcast("room:#{name}", "gameover", %{})
+    {:noreply, socket}
   end
 
   @doc """
@@ -60,16 +74,6 @@ defmodule TanksWeb.GameChannel do
     player = Game.get_player_from_uid(game, uid)
     GenServer.cast(name, {:move, player, String.to_atom(direction)})
     # broadcast socket, "update_game", %{game: Game.client_view(game)}
-    {:reply, {:ok, Game.client_view(game)}, socket}
-  end
-
-  @doc """
-    delete the tank which has been killed and in the destroyed_tanks_last_frame list
-  """
-  def handle_in("delete_a_destroyed_tank", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
-    game = GenServer.call(name, :get_state)
-    GenServer.cast(name, {:delete_tank, uid})
-    broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:reply, {:ok, Game.client_view(game)}, socket}
   end
 

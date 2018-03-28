@@ -12,6 +12,7 @@ export default class Game extends Component{
     super(props);
 
     this.channel = props.channel;
+    this.gameover = false;
     this.state = {
       canvas: {width: 0, height: 0},
       tanks: [],
@@ -23,6 +24,7 @@ export default class Game extends Component{
 
     // this.testData();
 
+    console.log("initializing game component");
     this.channelInit();
     this.attachKeyEventHandler();
   }
@@ -81,15 +83,28 @@ export default class Game extends Component{
   gotView(game) {
     // console.log(JSON.stringify(game));
     // console.log(game);
+    // if (game.tanks.length == 1)
+    //   this.channel.push("end");
+    // else
+    //   this.setState(game);
     this.setState(game);
   }
 
   channelInit() {
     this.channel.join()
         .receive("ok", this.gotView.bind(this))
-        .receive("error", resp => { console.error("Unable to join", resp) });
+        .receive("error", resp => {
+          if (resp.reason == "terminated"){
+            this.channel.leave();
+          } else
+          console.error("Unable to join game channel", resp)
+        });
 
-    this.channel.on("update", game => this.gotView(game) );
+    this.channel.on("gameover", () => {
+      this.gameover = true;
+      this.displayGameOver();
+      setTimeout(()=>this.channel.push("game_ended"), 5000);
+    });
   }
 
   animate() {
@@ -102,7 +117,8 @@ export default class Game extends Component{
     this.channel.push("get_state")
       .receive("ok", game => {
         this.gotView(game);
-        requestAnimationFrame(this.animate.bind(this));
+        if (!this.gameover)
+          requestAnimationFrame(this.animate.bind(this));
       });
   }
 
@@ -162,11 +178,20 @@ export default class Game extends Component{
     }
   }
 
+  displayGameOver(){
+    let winner = this.state.tanks[0].player.id;
+    if (window.user == winner)
+      console.log("YOU WIN!!!!!");
+    console.log("Game is over! Returning back to room in 5s");
+  }
+
   is_player() {
     let uid = window.user;
     let tanks = this.state.tanks;
     return _.contains(tanks.map( (t) => t.player.id), uid);
   }
+
+
 
   testData(){
 

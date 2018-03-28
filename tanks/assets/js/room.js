@@ -32,6 +32,7 @@ class Room extends Component {
   }
 
   gotView({room}) {
+    console.log(room.players);
     this.setState(room)
   }
 
@@ -85,7 +86,7 @@ class Room extends Component {
   channelInit(){
     this.channel.join()
         .receive("ok", this.gotView.bind(this) )
-        .receive("error", resp => { console.log("Unable to join", resp) });
+        .receive("error", resp => { console.log("Unable to join room channel", resp) });
 
     if ( window.location.search.includes('join') ){
       this.channel.push("enter", {uid: window.user})
@@ -108,6 +109,10 @@ class Room extends Component {
     this.channel.on("update_room", data => {
       console.log("update room", data);
       console.log("room playing?", room.is_playing);
+
+    this.channel.on("gameover", () => {
+      this.channel.push("end");
+    });
 
       // this.channel.push("info", {when: "room updated"})
       //     .receive("ok", data => {
@@ -156,14 +161,6 @@ function Player({player, owner, onKickout, index}){
   let kickout_button = (window.user == owner.id && player.id != owner.id)
                         ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
-  let tank_thumbnails = ['url("/images/tank-cyan.png")',
-                         'url("/images/tank-red.png")',
-                         'url("/images/tank-army-green.png")',
-                         'url("/images/tank-yellow.png")',
-                         'url("/images/tank-khaki.png")',
-                         'url("/images/tank-green.png")',
-                         'url("/images/tank-magenta.png")',
-                         'url("/images/tank-purple.png")',];
 
   let card_style = {
     borderRadius: 10,
@@ -193,7 +190,7 @@ function Player({player, owner, onKickout, index}){
     backgroundSize: 'contain',
     display: 'inline-block',
   };
-  tank_thumbnail_style.backgroundImage = tank_thumbnails[index];
+  tank_thumbnail_style.backgroundImage = `url(${player.tank_thumbnail})`;
 
   let btn_kickout_wrapper_style = {
     height: "2.5em"

@@ -35,8 +35,11 @@ defmodule Tanks.GameServer do
     # IO.puts "@@@@@@@@@@@@@@@ auto_update_state called"
     Process.sleep(40) # 50 * 20 = 1000 => 20 FPS
     GenServer.cast(servername, :auto_update_state)
-    # Process.send_after(servername, :auto_update_state, 50)
-    {:noreply, {servername, Game.next_state(game)}}
+    if length(game.missiles) > 0 do
+      {:noreply, {servername, Game.next_state(game)}}
+    else
+      {:noreply, {servername, game}}
+    end
   end
 
   @doc """
@@ -54,6 +57,7 @@ defmodule Tanks.GameServer do
   end
 
   def handle_cast({:fire, player}, {servername, game}) do
+    # GenServer.cast(servername, :auto_update_state)
     {:noreply, {servername, Game.fire(game, player)}}
   end
 
@@ -63,6 +67,12 @@ defmodule Tanks.GameServer do
 
   def handle_cast({:delete_tank, player_id}, {servername, game}) do
     {:noreply, {servername, Game.remove_destroyed_tank(game, player_id)}}
+  end
+
+  def terminate(reason, {servername, game}) do
+    # IO.puts ">>>>>>> RECEIVED TERMINATEING CALLBACK"
+    # IO.inspect %{"KKKKKKKKKKKKKKKK REASON" => reason}
+    :normal
   end
 
 end
