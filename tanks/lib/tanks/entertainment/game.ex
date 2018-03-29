@@ -226,6 +226,7 @@ defmodule Tanks.Entertainment.Game do
   defp hit_tanks?(missile, tanks) do
     Enum.any?(tanks, fn o -> collide_missile_tank?(missile, o) end)
   end
+
   defp collide_missile_tank?(missile, tank) do
     # tank center point {cx, cy}
     {cx, cy} = {tank.x+tank.width/2, tank.y+tank.height/2}
@@ -235,15 +236,22 @@ defmodule Tanks.Entertainment.Game do
       :left -> missile.x < cx
       :right -> cx < missile.x
     end
-    collide?(missile, tank) && !my_own_missile?
+    collide_m_t?(missile, tank) && !my_own_missile?
   end
 
   defp collide?(a, b) do
     # abs((a.x + a.width/2) - (b.x + b.width/2)) <= (a.width + b.width) / 2 &&
     # abs((a.y + a.height/2) - (b.y + b.height/2)) <= (a.height + b.height) / 2
     :math.pow((a.x+a.width/2)-(b.x+b.width/2), 2) + :math.pow((a.y+a.height/2)-(b.y+b.height/2), 2) <= :math.pow(a.width+b.width, 2)
+  end
 
-
+  defp collide_m_t?(missile, tank) do
+    {tcx, tcy} = {tank.x + tank.width/2, tank.y + tank.height/2}
+    {mcx, mcy} = {missile.x + missile.width/2, missile.y + missile.height/2}
+    diffX = :math.pow(tcx - mcx, 2)
+    diffY = :math.pow(tcy - mcy, 2)
+    diffTarget = :math.pow(tank.width/2, 2) + :math.pow(tank.height/2, 2)
+    diffX + diffY <= diffTarget
   end
 
   defp can_tank_move?(:up, tank, game) do

@@ -98,7 +98,7 @@ export default class Game extends Component{
     this.channel.on("gameover", () => {
       this.gameover = true;
       this.displayGameOver();
-      setTimeout(() => this.channel.push("game_ended"), 5000);
+      setTimeout(() => this.channel.push("game_ended"), 6000);
     });
   }
 
@@ -183,5 +183,5 @@ export default class Game extends Component{
 function TankHPItem(props) {
   let player = props.username;
   let hp = props.hp;
-  return <div className="row font-weight-bold text-warning"><span className="text h5">{player} remain HP is: {hp}</span></div>;
+  return <div className="row font-weight-bold text-success"><span className="text h5">{player} remain HP is: {hp}</span></div>;
 }

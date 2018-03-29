@@ -31,14 +31,17 @@
             </li>
           <% end %>
           <li>
-            <%= link "After Game, Back To Home.", to: page_path(@conn, :index) %>
+            <%= link "Back To Home.", to: page_path(@conn, :index) %>
+          </li>
+          <li>
+            <h4>will be redirected to prepare page after 6 seconds if game has a winner ^_^</h4>
           </li>
         </ul>
       </nav>
       <%= if @view_module == TanksWeb.PageView do %>
         <div id="banner-image"></div>
       <% end %>
-      <h4>Welcome to Tank Game! A 2~4 players Game!</h4>
+      <h3>Welcome to Tank Game! A 2~4 players online game!</h3>
     </div>
     <div class="container">
       <%= if get_flash(@conn, :info) do %>
