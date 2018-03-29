@@ -11,7 +11,7 @@ defmodule Tanks.GameServer do
     # state is {name:, game: }
     # we use room name as our GenServer server name
     name = String.to_atom(name)
-    GenServer.start_link(__MODULE__, {name, game}, name: name)
+    GenServer.start(__MODULE__, {name, game}, name: name)
     GenServer.cast(name, :auto_update_state)
   end
 
@@ -20,6 +20,7 @@ defmodule Tanks.GameServer do
   end
 
   def terminate(name) do
+    name = if is_atom(name), do: name, else: String.to_atom(name)
     GenServer.stop(name)
   end
 
@@ -62,6 +63,10 @@ defmodule Tanks.GameServer do
 
   def handle_cast({:delete_tank, player_id}, {servername, game}) do
     {:noreply, {servername, Game.remove_destroyed_tank(game, player_id)}}
+  end
+
+  def terminate(reason, {servername, game}) do
+    :normal
   end
 
 end

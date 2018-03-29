@@ -16,12 +16,12 @@ defmodule TanksWeb.GameChannel do
     if authorized?(payload) do
       # new game process is attached by room_channel
       name = String.to_atom(name)
-      # IO.inspect %{name: name, game: GenServer.whereis(name)}
-
-      # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
-      game = GenServer.call(name, :get_state)
-      # IO.inspect {">>>>>>>>>>>> game", game}
-      {:ok, Game.client_view(game), assign(socket, :name, name)}
+      if GenServer.whereis(name) do
+        game = GenServer.call(name, :get_state)
+        {:ok, Game.client_view(game), assign(socket, :name, name)}
+      else
+        {:error, %{reason: "terminated"}}
+      end
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -34,7 +34,15 @@ defmodule TanksWeb.GameChannel do
   """
   def handle_in("get_state", _payload, %{assigns: %{name: name}} = socket) do
     game = GenServer.call(name, :get_state)
+    if length(game.tanks) == 1 do
+      broadcast socket, "gameover", %{}
+    end
     {:reply, {:ok, Game.client_view(game)}, socket}
+  end
+
+  def handle_in("game_ended", _, %{assigns: %{name: name}} = socket) do
+    TanksWeb.Endpoint.broadcast("room:#{name}", "gameover", %{})
+    {:noreply, socket}
   end
 
   @doc """

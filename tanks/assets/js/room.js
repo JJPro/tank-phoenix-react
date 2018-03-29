@@ -32,6 +32,7 @@ class Room extends Component {
   }
 
   gotView({room}) {
+    // window.room = room; // attach to window for testing
     this.setState(room)
   }
 
@@ -82,12 +83,12 @@ class Room extends Component {
     }
   }
 
-  channelInit(){
+  channelInit() {
     this.channel.join()
         .receive("ok", this.gotView.bind(this) )
-        .receive("error", resp => { console.log("Unable to join", resp) });
+        .receive("error", resp => { console.log("Unable to join room channel", resp) });
 
-    if ( window.location.search.includes('join') ){
+    if (window.location.search.includes('join')) {
       this.channel.push("enter", {uid: window.user})
         .receive("ok", resp => {
           console.log("join success:", resp);
@@ -95,36 +96,21 @@ class Room extends Component {
         .receive("error", ({reason}) => {
           console.log("enter error:", reason);
           alert("Unable to Join: " + reason);
-
         }
       );
-
-      this.channel.push("info", {when: "after enter"})
-          .receive("ok", data => {
-            console.log("info after enter", data);
-          });
     }
 
     this.channel.on("update_room", data => {
-      // console.log("update room", data);
-      // this.channel.push("info", {when: "room updated"})
-      //     .receive("ok", data => {
-      //       console.log("info room updated", data);
-      //     });
       this.gotView(data);
+    });
+
+    this.channel.on("gameover", () => {
+      this.channel.push("end");
     });
   }
 
   onReady(){
-    // this.channel.push("info", {when: "before ready"})
-    //     .receive("ok", data => {
-    //       console.log("info before ready", data);
-    //     });
     this.channel.push("ready", {uid: window.user});
-    // this.channel.push("info", {when: "after ready"})
-    //   .receive("ok", data => {
-    //     console.log("info after ready", data);
-    // });
   }
 
   onCancel(){
@@ -154,14 +140,6 @@ function Player({player, owner, onKickout, index}){
   let kickout_button = (window.user == owner.id && player.id != owner.id)
                         ? <button className="btn btn-outline-danger" onClick={() => onKickout(player.id)}>kickout</button>
                         : '';
-  let tank_thumbnails = ['url("/images/tank-cyan.png")',
-                         'url("/images/tank-red.png")',
-                         'url("/images/tank-army-green.png")',
-                         'url("/images/tank-yellow.png")',
-                         'url("/images/tank-khaki.png")',
-                         'url("/images/tank-green.png")',
-                         'url("/images/tank-magenta.png")',
-                         'url("/images/tank-purple.png")',];
 
   let card_style = {
     borderRadius: 10,
@@ -191,7 +169,7 @@ function Player({player, owner, onKickout, index}){
     backgroundSize: 'contain',
     display: 'inline-block',
   };
-  tank_thumbnail_style.backgroundImage = tank_thumbnails[index];
+  tank_thumbnail_style.backgroundImage = `url(${player.tank_thumbnail})`;
 
   let btn_kickout_wrapper_style = {
     height: "2.5em"

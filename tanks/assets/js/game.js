@@ -12,6 +12,8 @@ export default class Game extends Component{
     super(props);
 
     this.channel = props.channel;
+    window.game_channel = this.channel;
+    this.gameover = false;
     this.state = {
       canvas: {width: 0, height: 0},
       tanks: [],
@@ -27,12 +29,12 @@ export default class Game extends Component{
     this.attachKeyEventHandler();
   }
 
-  componentWillMount(){
+  componentWillMount() {
     // setInterval(this.animate.bind(this), 50);
     this.animate();
   }
 
-  render(){
+  render() {
     let canvas = this.state.canvas,
         tanks = this.state.tanks,
         missiles = this.state.missiles,
@@ -79,30 +81,33 @@ export default class Game extends Component{
 
   // format game data as needed
   gotView(game) {
-    // console.log(JSON.stringify(game));
-    // console.log(game);
+    window.game = game;
     this.setState(game);
   }
 
   channelInit() {
     this.channel.join()
         .receive("ok", this.gotView.bind(this))
-        .receive("error", resp => { console.error("Unable to join", resp) });
+        .receive("error", resp => {
+          if (resp.reason == "terminated"){
+            this.channel.leave();
+          } else
+            console.error("Unable to join game channel", resp)
+          });
 
-    this.channel.on("update", game => this.gotView(game) );
+    this.channel.on("gameover", () => {
+      this.gameover = true;
+      this.displayGameOver();
+      setTimeout(() => this.channel.push("game_ended"), 5000);
+    });
   }
 
   animate() {
-
-    // this.channel.push("get_state")
-    //   .receive("ok", game => {
-    //     this.gotView(game);
-    //   });
-
     this.channel.push("get_state")
       .receive("ok", game => {
         this.gotView(game);
-        requestAnimationFrame(this.animate.bind(this));
+        if (!this.gameover)
+          requestAnimationFrame(this.animate.bind(this));
       });
   }
 
@@ -122,15 +127,19 @@ export default class Game extends Component{
     let direction = null;
     let fire = false;
     switch (key) {
+      case "w":
       case "ArrowUp":
         direction = "up";
         break;
+      case "s":
       case "ArrowDown":
         direction = "down";
         break;
+      case "a":
       case "ArrowLeft":
         direction = "left";
         break;
+      case "d":
       case "ArrowRight":
         direction = "right";
         break;
@@ -151,6 +160,10 @@ export default class Game extends Component{
       this.channel.push("fire", {uid: window.user})
           .receive("ok", this.gotView.bind(this));
     }
+  }
+
+  displayGameOver() {
+    console.log("Game is over! Returning back to room in 5s");
   }
 
   is_player() {
