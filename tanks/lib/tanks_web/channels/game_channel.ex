@@ -23,7 +23,8 @@ defmodule TanksWeb.GameChannel do
       # game = GenServer.call(name, :get_state)
       if GenServer.whereis(name) do
         game = GenServer.call(name, :get_state)
-        {:ok, Game.client_view(game), assign(socket, :name, name)}
+        {:ok, Game.client_view(game), socket |> assign(:name, name)
+                                             |> assign(:game, game)}
       else
         {:error, %{reason: "terminated"}}
       end
@@ -37,18 +38,24 @@ defmodule TanksWeb.GameChannel do
     1. get state from game_server
     2. send state->gameview to client
   """
-  def handle_in("get_state", _payload, %{assigns: %{name: name}} = socket) do
-    game = GenServer.call(name, :get_state)
-    if length(game.tanks) == 1 do
-      broadcast socket, "gameover", %{}
+  def handle_in("get_state", _payload, %{assigns: %{name: name, game: game}} = socket) do
+    new_game = GenServer.call(name, :get_state)
+    if game == new_game do
+      {:reply, :no_change, socket}
+    else
+      if length(new_game.tanks) == 1 do
+        broadcast socket, "gameover", %{}
+      end
+      {:reply, {:ok, Game.client_view(new_game)}, assign(socket, :game, new_game)}
     end
-    {:reply, {:ok, Game.client_view(game)}, socket}
+
   end
 
   def handle_in("game_ended", _, %{assigns: %{name: name}} = socket) do
 
     TanksWeb.Endpoint.broadcast("room:#{name}", "gameover", %{})
-    {:noreply, socket}
+    # {:noreply, socket}
+    {:stop, :normal, socket}
   end
 
   @doc """

@@ -14,6 +14,8 @@ export default class Game extends Component{
     this.channel = props.channel;
     window.game_channel = this.channel;
     this.gameover = false;
+    this.fpsInterval = 1000 / 20; // 20 fps
+    this.then = Date.now();
     this.state = {
       canvas: {width: 0, height: 0},
       tanks: [],
@@ -31,7 +33,6 @@ export default class Game extends Component{
   }
 
   componentWillMount(){
-    // setInterval(this.animate.bind(this), 50);
     this.animate();
   }
 
@@ -116,12 +117,20 @@ export default class Game extends Component{
     //     this.gotView(game);
     //   });
 
-    this.channel.push("get_state")
-      .receive("ok", game => {
-        this.gotView(game);
-        if (!this.gameover)
-          requestAnimationFrame(this.animate.bind(this));
-      });
+    if (!this.gameover){
+
+      let now = Date.now();
+      let elapsed = now - this.then;
+      if (elapsed > this.fpsInterval) {
+        this.channel.push("get_state")
+        .receive("ok", game => {
+          // console.log("new game");
+          this.gotView(game);
+        });
+        this.then = now - (elapsed % this.fpsInterval);
+      }
+      requestAnimationFrame(this.animate.bind(this));
+    }
   }
 
   attachKeyEventHandler() {

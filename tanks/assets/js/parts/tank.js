@@ -6,8 +6,10 @@ export default class Tank extends Component{
   constructor(props){
     super(props);
     this.state = {image: null}
+    console.log("initializing tank");
   }
 
+  // componentDidMount(){
   componentWillReceiveProps(){
     // console.log({thumbnail: this.props.tank.player.tank_thumbnail});
     let image = new window.Image();

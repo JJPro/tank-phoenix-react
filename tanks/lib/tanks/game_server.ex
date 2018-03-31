@@ -12,7 +12,8 @@ defmodule Tanks.GameServer do
     # we use room name as our GenServer server name
     name = String.to_atom(name)
     GenServer.start(__MODULE__, {name, game}, name: name)
-    GenServer.cast(name, :auto_update_state)
+    # GenServer.cast(name, :auto_update_state)
+    Process.send(name, :auto_update_state, [])
   end
 
   def init({name, game}) do
@@ -22,21 +23,21 @@ defmodule Tanks.GameServer do
   def terminate(name) do
     IO.puts "======== TERMINATING"
     name = if is_atom(name), do: name, else: String.to_atom(name)
-    GenServer.stop(name)
+    GenServer.stop(name, :shutdown)
   end
-
-  # def call(name, message) do
-  #   GenServer.call()
-  # end
-
 
 
 ## Server Implementations
-  def handle_cast(:auto_update_state, {servername, game}) do
+  def handle_info(:auto_update_state, {servername, game}) do
     # IO.puts "@@@@@@@@@@@@@@@ auto_update_state called"
-    Process.sleep(50) # 50 * 20 = 1000 => 20 FPS
-    GenServer.cast(servername, :auto_update_state)
-    {:noreply, {servername, Game.next_state(game)}}
+    # Process.sleep(50) # 50 * 20 = 1000 => 20 FPS
+    # GenServer.cast(servername, :auto_update_state)
+    Process.send_after(servername, :auto_update_state, 50) # 1000 / 20 = 20 => 20 FPS
+    if length(game.missiles) > 0 do
+      {:noreply, {servername, Game.next_state(game)}}
+    else
+      {:noreply, {servername, game}}
+    end
   end
 
   @doc """
