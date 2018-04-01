@@ -92,17 +92,19 @@ defmodule Tanks.Entertainment.Game do
       [missile | game.missiles]
   """
   def fire(game, player) do
-    # IO.inspect %{event: "fireing", game: game, player: player}
     tank = game.tanks |> Enum.find(fn t -> t.player == player end)
     # IO.inspect %{event: "fireing", tank: tank}
-
-    missile = case tank.orientation do
-      :up -> %Missile{x: tank.x + tank.width/2, y: tank.y, direction: :up}
-      :right -> %Missile{x: tank.x + tank.width, y: tank.y+tank.height/2, direction: :right}
-      :down -> %Missile{x: tank.x + tank.width/2, y: tank.y+tank.height, direction: :down}
-      :left -> %Missile{x: tank.x, y: tank.y+tank.height/2, direction: :left}
+    if tank do
+      missile = case tank.orientation do
+        :up -> %Missile{x: tank.x + tank.width/2, y: tank.y, direction: :up}
+        :right -> %Missile{x: tank.x + tank.width, y: tank.y+tank.height/2, direction: :right}
+        :down -> %Missile{x: tank.x + tank.width/2, y: tank.y+tank.height, direction: :down}
+        :left -> %Missile{x: tank.x, y: tank.y+tank.height/2, direction: :left}
+      end
+      %{game | missiles: [missile | game.missiles]}
+    else
+      %{game}
     end
-    %{game | missiles: [missile | game.missiles]}
   end
 
   @doc """

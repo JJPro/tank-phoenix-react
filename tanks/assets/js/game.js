@@ -204,6 +204,6 @@ export default class Game extends Component{
   is_player() {
     let uid = window.user;
     let tanks = this.state.tanks;
-    return _.contains(tanks.map( (t) => t.player.id), uid);
+    return tanks.map( (t) => t.player.id ).includes(uid);
   }
 }
