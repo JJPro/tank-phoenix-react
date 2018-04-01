@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import socket from './socket';
 import Game from './game';
+import Chat from './chat';
 
 
 export default (root) => {
@@ -21,12 +22,16 @@ class Room extends Component {
     super(props);
 
     this.channel = props.channel;
-    window.channel = this.channel; // TODO: attach to window for testing
+    window.channel = this.channel; // attach to window for testing
     this.state = {
       name: "",
       players: [],
       is_playing: false,
     };
+
+    /**
+    Player is : {name, id, is_owner, is_ready, tank_thumbnail}
+    */
 
     this.channelInit();
   }
@@ -37,12 +42,12 @@ class Room extends Component {
     this.setState(room)
   }
 
-  // TODO: check room status,
+  // Check room status,
   //    if playing -> render game,
   //    otherwise, render room.
   render(){
     if (this.state.is_playing){
-      return (<Game channel={socket.channel(`game:${this.state.name}`)}/>);
+      return (<Game channel={socket.channel(`game:${this.state.name}`)} players={this.state.players}/>);
     } else {
 
       let {name, players} = this.state;
@@ -62,14 +67,21 @@ class Room extends Component {
 
         button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
 
-          let disable_start = players.length < 2 || players.some( p => !p.is_ready );
-          if (current_player.is_owner)
-          button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
-          }
+        let disable_start = players.length < 2 || players.some( p => !p.is_ready );
+        if (current_player.is_owner)
+        button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
+      }
 
-          return (
-            <div className="text-center p-3">
-              <h1>Room: {name}</h1>
+      let chat_container_style = {
+        width: "250px",
+        display: "flex",
+      }
+
+      return (
+        <div className="text-center p-3">
+          <h1>Room: {name}</h1>
+          <div className="d-flex flex-row">
+            <div className="players-container col">
               <div className="players d-flex justify-content-center flex-wrap">
                 {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
               </div>
@@ -79,8 +91,12 @@ class Room extends Component {
                 {button_leave}
               </div>
             </div>
-          );
-
+            <div className="chat-container" style={chat_container_style}>
+              <Chat channel={socket.channel(`chat:${window.room_name}`)}/>
+            </div>
+          </div>
+        </div>
+      );
     }
   }
 
@@ -109,8 +125,31 @@ class Room extends Component {
 
       this.gotView(data);
     });
-    this.channel.on("gameover", () => {
-      this.channel.push("end");
+
+    // handle game start message
+    // this is a good chance to do stuff before game start, ex. game start animations
+    this.channel.on("gamestart", () => {
+      // block all key actions
+      let blockKeyPress = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      };
+      // build basic elements for countdown animations
+      let countdown = $('<div id="active" tabindex="0" style="position: fixed; top: 0; font-size: 20em; width: 100vw; height: 100vh; background: rgba(255,255,255,.7); display: flex; flex-direction: column; align-items: center;justify-content: center;"></div>');
+      countdown.appendTo('body');
+      document.getElementById("active").addEventListener("keydown", blockKeyPress);
+
+      // animate countdown process
+      function countdown_fn(n){
+        countdown.html(n);
+        if (n > 0){
+          setTimeout(() => countdown_fn(n-1), 1000);
+        } else {
+          // remove countdown layer, keyboard blocking will be automatically removed when element is removed.
+          countdown.remove();
+        }
+      }
+      countdown_fn(7);
     });
   }
 

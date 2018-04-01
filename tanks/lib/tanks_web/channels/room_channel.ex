@@ -69,17 +69,11 @@ defmodule TanksWeb.RoomChannel do
   def handle_in("enter", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
     # IO.puts "<<<<<<<<< Enter"
     user = Accounts.get_user!(uid)
-    case Room.get_status(RoomStore.load(name)) do
+    room = RoomStore.load(name)
+    case Room.get_status(room) do
       :open ->
-
-          # IO.puts ">>>>>> user entering room"
-          # IO.inspect %{room: socket.assigns.room, user: user}
-          room = Room.add_player(RoomStore.load(name), user)
+          room = Room.add_player(room, user)
           RoomStore.save(name, room)
-          # socket = assign(socket, :room, room)
-          # IO.puts ">>>>>> user entered room"
-          # IO.inspect socket.assigns.room
-
 
           # broadcast change to all players and observers
           broadcast socket, "update_room", %{room: room_data(room)}
@@ -87,9 +81,20 @@ defmodule TanksWeb.RoomChannel do
           TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: Room.get_status(room)}})
 
           {:noreply, socket}
-          # {:reply, :ok, socket}
-      :full -> {:reply, {:error, %{reason: "Room is full."}}, socket}
-      :playing -> {:reply, {:error, %{reason: "Game already stared."}}, socket}
+      :full ->
+        if Room.get_player_from_user(room, user) do
+          # user rejoin after disconnect
+          {:noreply, socket}
+        else
+          {:reply, {:error, %{reason: "Room is full."}}, socket}
+        end
+      :playing ->
+        if Room.get_player_from_user(room, user) do
+          # user rejoin after disconnect
+          {:noreply, socket}
+        else
+          {:reply, {:error, %{reason: "Game already stared."}}, socket}
+        end
     end
   end
 
@@ -142,19 +147,6 @@ defmodule TanksWeb.RoomChannel do
     end
   end
 
-  def handle_in("end", payload, %{assigns: %{name: name}} = socket) do
-    room = Room.end_game(RoomStore.load(name))
-    # IO.inspect {">>>>>>>>>>>>>> ROOM AFTER ENDED", room}
-    RoomStore.save(name, room)
-    # socket = assign(socket, :room, room)
-    # broadcast change to all players and observers
-    broadcast socket, "update_room", %{room: room_data(room)}
-    # broadcast to home page viewers (list_rooms_channel.ex)
-    TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: Room.get_status(room)}})
-
-    {:noreply, socket}
-  end
-
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true
@@ -178,7 +170,7 @@ defmodule TanksWeb.RoomChannel do
   @doc """
   format room object to json format
   """
-  defp room_data(room) do
+  def room_data(room) do
     # IO.puts '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
     # IO.inspect %{room: room}
     %{

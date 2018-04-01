@@ -1,16 +1,6 @@
+<div id="room"></div>
 <script type="text/javascript">
   window.room_name = "<%= @name %>";
   window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
   window.room_exists = <%= Tanks.RoomStore.load(@name) != nil %>;
 </script>
-
-<div class="row">
-  <div id="room" class="col-10"></div>
-  <div id="chat" class="col-2">
-    <ul id="msg-list" class="row" style="list-style: none; min-height:400px; min-width:200px; border: 1px solid #e5e5e5; margin: 10px; padding: 10px; display: block;">
-    </ul>
-    <div>
-      <input type="text" id="msg" class="form-control" placeholder="Type message..">
-    </div>
-  </div>
-</div>

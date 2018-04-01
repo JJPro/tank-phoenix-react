@@ -5,6 +5,10 @@ defmodule TanksWeb.GameChannel do
   alias GenServer
   alias Tanks.Entertainment.Game
 
+  def broadcast_state(game, name) do
+    TanksWeb.Endpoint.broadcast("game:#{name}", "update_game", %{game: Game.client_view(game)})
+  end
+
   @doc """
   1. retrieve game state from game_server process
   2. send back game state
@@ -16,11 +20,8 @@ defmodule TanksWeb.GameChannel do
     if authorized?(payload) do
       # new game process is attached by room_channel
       name = String.to_atom(name)
-      # IO.inspect %{name: name, game: GenServer.whereis(name)}
 
       # IO.puts ">>>>>>>>>>> trying to join a game"
-      # game = if GenServer.whereis(name), do: GenServer.call(name, :get_state), else:
-      # game = GenServer.call(name, :get_state)
       if GenServer.whereis(name) do
         game = GenServer.call(name, :get_state)
         {:ok, Game.client_view(game), socket |> assign(:name, name)
@@ -34,31 +35,6 @@ defmodule TanksWeb.GameChannel do
   end
 
   @doc """
-  get current game state from game_server process and send back to client:
-    1. get state from game_server
-    2. send state->gameview to client
-  """
-  def handle_in("get_state", _payload, %{assigns: %{name: name, game: game}} = socket) do
-    new_game = GenServer.call(name, :get_state)
-    if game == new_game do
-      {:reply, :no_change, socket}
-    else
-      if length(new_game.tanks) == 1 do
-        broadcast socket, "gameover", %{}
-      end
-      {:reply, {:ok, Game.client_view(new_game)}, assign(socket, :game, new_game)}
-    end
-
-  end
-
-  def handle_in("game_ended", _, %{assigns: %{name: name}} = socket) do
-
-    TanksWeb.Endpoint.broadcast("room:#{name}", "gameover", %{})
-    # {:noreply, socket}
-    {:stop, :normal, socket}
-  end
-
-  @doc """
   1. ask game_server to fire
   2. send state->gameview to client
   """
@@ -67,9 +43,9 @@ defmodule TanksWeb.GameChannel do
     # IO.inspect %{user: uid}
     game = GenServer.call(name, :get_state)
     player = Game.get_player_from_uid(game, uid)
-    GenServer.cast(name, {:fire, player})
-    # broadcast socket, "update_game", %{game: Game.client_view(game)}
-    {:reply, {:ok, Game.client_view(game)}, socket}
+    game = GenServer.call(name, {:fire, player})
+    broadcast socket, "update_game", %{game: Game.client_view(game)}
+    {:noreply, socket}
   end
 
   @doc """
@@ -79,9 +55,9 @@ defmodule TanksWeb.GameChannel do
   def handle_in("move", %{"uid" => uid, "direction" => direction}, %{assigns: %{name: name}} = socket) do
     game = GenServer.call(name, :get_state)
     player = Game.get_player_from_uid(game, uid)
-    GenServer.cast(name, {:move, player, String.to_atom(direction)})
-    # broadcast socket, "update_game", %{game: Game.client_view(game)}
-    {:reply, {:ok, Game.client_view(game)}, socket}
+    game = GenServer.call(name, {:move, player, String.to_atom(direction)})
+    broadcast socket, "update_game", %{game: Game.client_view(game)}
+    {:noreply, socket}
   end
 
   # Add authorization logic here as required.

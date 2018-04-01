@@ -21,10 +21,19 @@
 
 #rooms-list {
   .room-cards {
-    .room-card { border-radius: 1em; margin: 20px; width: 10em;
-      &.status-open {background: rgba(154, 199, 253, 1);}
-      &.status-playing {background: #adecb7;}
-      &.status-full {background: #ffe383;}
+    .room-card { border-radius: 7px; margin: 20px; width: 10em;
+      .room-status {position: absolute; transform: translate(29%, -92%); border-radius: 15px;
+        padding: 2px 13px 8px; border: 1px solid; }
+      .room-name {margin-top: 5px;}
+      &.status-open {background: #9bc6f6;
+        .room-status{border-color: #5ba5fa;background:#cae0f8;}
+      }
+      &.status-playing {background: #adecb7;
+        .room-status{border-color: #80e08e;background:#bbebc1;}
+      }
+      &.status-full {background: #ffe383;
+        .room-status{border-color: #fbe38d;background:#f8f1d3;}
+      }
     }
   }
 }

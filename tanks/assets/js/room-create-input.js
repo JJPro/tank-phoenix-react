@@ -6,7 +6,7 @@ export default (root) => render(<Input />, root);
 const STATUS_FULL = "full",
       STATUS_PLAYING = "playing",
       STATUS_OPEN = "open",
-      STATUS_NOT_EXIST = "";
+      STATUS_NOT_EXIST = null;
 
 class Input extends Component {
   constructor(props) {
@@ -35,8 +35,14 @@ class Input extends Component {
         }
       );
     }
+  }
 
-
+  onKeyDown(ev) {
+    if (ev.key == 'Enter'){
+      if (this.state.room_status == STATUS_NOT_EXIST){
+        window.location = window.room_url.replace('placeholder', this.state.term.trim() + "?create=true" );
+      }
+    }
   }
 
   render() {
@@ -60,7 +66,7 @@ class Input extends Component {
 
     return (
         <div className="input-group">
-          <input type="text" className="form-control" placeholder="Create A Room" aria-label="Create A Room" aria-describedby="basic-addon2" onChange={this.onChangeTerm.bind(this)} ref="input" />
+          <input type="text" className="form-control" placeholder="Create A Room" aria-label="Create A Room" aria-describedby="basic-addon2" onChange={this.onChangeTerm.bind(this)} onKeyPress={this.onKeyDown.bind(this)} ref="input" />
           {buttons}
         </div>
     );

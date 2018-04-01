@@ -227,6 +227,9 @@ defmodule Tanks.Entertainment.Game do
     Enum.any?(tanks, fn o -> collide_missile_tank?(missile, o) end)
   end
   defp collide_missile_tank?(missile, tank) do
+    collide? = missile.x >= tank.x && missile.x <= tank.x + tank.width &&
+               missile.y >= tank.y && missile.y <= tank.y + tank.height
+
     # tank center point {cx, cy}
     {cx, cy} = {tank.x+tank.width/2, tank.y+tank.height/2}
     my_own_missile? = case missile.direction do
@@ -235,7 +238,7 @@ defmodule Tanks.Entertainment.Game do
       :left -> missile.x < cx
       :right -> cx < missile.x
     end
-    collide?(missile, tank) && !my_own_missile?
+    collide? && !my_own_missile?
   end
 
   defp collide?(a, b) do

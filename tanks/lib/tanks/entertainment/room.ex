@@ -90,9 +90,10 @@ defmodule Tanks.Entertainment.Room do
   end
 
   def end_game(room) do
-    # IO.puts ">>>>>> TERMINATING GAME"
-    GameServer.terminate(room.name)
-    %{room | playing?: false}
+    # terminate game process, this is an automatic thing in game server
+    # reset ready state
+    # reset playing status
+    %{room | playing?: false, players: Enum.map(room.players, fn p -> %{p | ready?: false} end)}
   end
 
   @doc """
@@ -110,7 +111,7 @@ defmodule Tanks.Entertainment.Room do
   get player from user.
   :: %{user: , ready?:, owner?: } | nil
   """
-  defp get_player_from_user(room, user) do
+  def get_player_from_user(room, user) do
     room.players |> Enum.find(fn p -> p.user == user end)
   end
 end

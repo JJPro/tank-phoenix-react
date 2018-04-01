@@ -1,5 +1,7 @@
 defmodule Tanks.GameServer do
-  alias Tanks.Entertainment.Game
+  alias Tanks.Entertainment.{Game, Room}
+  alias Tanks.RoomStore
+  alias TanksWeb.{GameChannel, RoomChannel}
 
 
 ## Interfaces
@@ -12,29 +14,60 @@ defmodule Tanks.GameServer do
     # we use room name as our GenServer server name
     name = String.to_atom(name)
     GenServer.start(__MODULE__, {name, game}, name: name)
-    # GenServer.cast(name, :auto_update_state)
     Process.send(name, :auto_update_state, [])
+
+    # broadcast to all connected sockets,
+    # this is a good chance to implement game start countdown
+    TanksWeb.Endpoint.broadcast!("room:#{name}", "gamestart", %{})
   end
 
+## Server Implementations
   def init({name, game}) do
     {:ok, {name, game}}
   end
 
-  def terminate(name) do
-    IO.puts "======== TERMINATING"
-    name = if is_atom(name), do: name, else: String.to_atom(name)
-    GenServer.stop(name, :shutdown)
-  end
-
-
-## Server Implementations
+  # Game Loop:
   def handle_info(:auto_update_state, {servername, game}) do
     # IO.puts "@@@@@@@@@@@@@@@ auto_update_state called"
-    # Process.sleep(50) # 50 * 20 = 1000 => 20 FPS
-    # GenServer.cast(servername, :auto_update_state)
+
+    # loop:
     Process.send_after(servername, :auto_update_state, 50) # 1000 / 20 = 20 => 20 FPS
+
+    name = Atom.to_string(servername)
+    clear_missiles = false
+    # update missile trajectory
     if length(game.missiles) > 0 do
-      {:noreply, {servername, Game.next_state(game)}}
+      clear_missiles = true
+      # broadcast current state
+      GameChannel.broadcast_state(game, name)
+      # iterate to next state
+      game = Game.next_state(game)
+    end
+    if clear_missiles, do: GameChannel.broadcast_state(game, name)
+
+
+    # Handle game over situation
+    if length(game.tanks) == 1 && length(game.missiles) == 0 do
+      # broadcast current state
+      GameChannel.broadcast_state(game, name)
+      # update room with Room.end_game
+      room = Room.end_game(RoomStore.load(name))
+      RoomStore.save(name, room)
+      # broadcast to game about gameover, client should congrat winner and get back to room in 5 seconds.
+      TanksWeb.Endpoint.broadcast!("game:#{name}", "gameover", %{game: Game.client_view(game)})
+      IO.puts "I'm here 4"
+
+      # wait for 5 seconds
+      Process.sleep(5000)
+      # broadcast to room, so that room get updated and render the room view
+      IO.puts "I'm here 5"
+
+      TanksWeb.Endpoint.broadcast!("room:#{name}", "update_room", %{room: RoomChannel.room_data(room)})
+      # broadcast to list_rooms/homepage, so it can update new room status
+      TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: Room.get_status(room)}})
+
+      # finally tell genserver process to stop
+      {:stop, :normal, {servername, game}}
     else
       {:noreply, {servername, game}}
     end
@@ -43,34 +76,18 @@ defmodule Tanks.GameServer do
   @doc """
   :: game
   """
-  # def handle_call(:get_state, _from, {servername, game}) do
-  #   IO.puts ">>>>>>>>>>>>> handle_call :get_state"
-  #   IO.inspect
-  #   {:reply, game, game}
-  # end
   def handle_call(:get_state, _from, {servername, game} = state) do
-    # IO.puts ">>>>>>>>>>>>> handle_call :get_state"
-    # IO.inspect %{state: state}
     {:reply, game, state}
   end
 
-  def handle_cast({:fire, player}, {servername, game}) do
-    # GenServer.cast(servername, :auto_update_state)
-    {:noreply, {servername, Game.fire(game, player)}}
+  def handle_call({:fire, player}, _, {servername, game}) do
+    game = Game.fire(game, player)
+    {:reply, game, {servername, game}}
   end
 
-  def handle_cast({:move, player, direction}, {servername, game}) do
-    {:noreply, {servername, Game.move(game, player, direction)}}
-  end
-
-  def handle_cast({:delete_tank, player_id}, {servername, game}) do
-    {:noreply, {servername, Game.remove_destroyed_tank(game, player_id)}}
-  end
-
-  def terminate(reason, {servername, game}) do
-    # IO.puts ">>>>>>> RECEIVED TERMINATEING CALLBACK"
-    # IO.inspect %{"KKKKKKKKKKKKKKKK REASON" => reason}
-    :normal
+  def handle_call({:move, player, direction}, _, {servername, game}) do
+    game = Game.move(game, player, direction)
+    {:reply, game, {servername, game}}
   end
 
 end

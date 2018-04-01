@@ -63,6 +63,7 @@ function Room({room}) {
   if (room.status == "open") {
     join_button = <a href={room_url.replace('placeholder', room.name)+"?join=true"} className='btn btn-block btn-success btn-small btn-join'>Join</a>;
   }
+
   return (
     <div className={`room-card status-${room.status} align-self-stretch p-3`}>
       <h2 className="room-status">{room.status}</h2>
