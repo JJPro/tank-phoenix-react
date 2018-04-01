@@ -22,9 +22,9 @@
 #rooms-list {
   .room-cards {
     .room-card { border-radius: 7px; margin: 20px; width: 10em;
-      .room-status {position: absolute; transform: translate(29%, -92%); border-radius: 15px;
+      .room-status {position: relative; transform: translateY(-83%); border-radius: 15px;
         padding: 2px 13px 8px; border: 1px solid; }
-      .room-name {margin-top: 5px;}
+      .room-name {margin-top: -37px;}
       &.status-open {background: #9bc6f6;
         .room-status{border-color: #5ba5fa;background:#cae0f8;}
       }
@@ -37,71 +37,3 @@
     }
   }
 }
-
-// #chat_container {
-//   background: #D3D3D3
-//   flex: 1
-//   display: flex
-//   flex-direction: column
-//   padding: 0.75em
-//   display: flex
-//   border-left: 1px solid #CBCBD2
-//
-//   .status {
-//     display: inline-block
-//     width: 10px
-//     height: 10px
-//     vertical-align: middle
-//     background: #CBCBD2
-//     border-radius: 50%
-//
-//     &.connected {background: #3CA11C}
-//   }
-//
-//   .messages-container {
-//     background: #fff
-//     flex: 1
-//     border-radius: 3px
-//     display: flex
-//     padding: 1.5em 0
-//
-//     ul {
-//       list-style: none
-//       padding: 0
-//       margin: 0
-//       overflow-y: scroll
-//       flex: 1
-//
-//       li {
-//         padding: 0 0.75em
-//         margin-bottom: (0.75em / 2)
-//
-//         span {
-//           display: inline-block
-//           background: rgba(#ADD8E6, .5)
-//           border-radius: 3px
-//           padding: (0.75em / 2)
-//           max-width: 75%
-//           text-align: left
-//         }
-//
-//         &.mine {
-//           text-align: right
-//
-//           span {
-//             background: rgba(#98FB98, .5)
-//           }
-//         }
-//       }
-//     }
-//   }
-//
-//
-//   .form-container {
-//     padding-top: 0.75em
-//
-//     textarea {
-//       width: 100%
-//     }
-//   }
-// }
