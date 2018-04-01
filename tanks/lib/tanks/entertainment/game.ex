@@ -103,7 +103,7 @@ defmodule Tanks.Entertainment.Game do
       end
       %{game | missiles: [missile | game.missiles]}
     else
-      %{game}
+      game
     end
   end
 
