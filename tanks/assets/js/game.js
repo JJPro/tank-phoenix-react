@@ -183,7 +183,7 @@ export default class Game extends Component{
     if (window.user == winner)
       greeting_msg = "Congrats! YOU WIN!!!";
     let gameover_layer = $('<div style="position:fixed; top: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,.7); display: flex; flex-direction: column; align-items: center;justify-content: center;"></div>');
-    let greeting_element = $('<p style="font-size:7em;"></p>').html(greeting_msg);
+    let greeting_element = $('<p style="font-size:5em;"></p>').html(greeting_msg);
     let countdown = $('<p style="font-size: 2em;"></p>');
     greeting_element.appendTo(gameover_layer);
     countdown.appendTo(gameover_layer);

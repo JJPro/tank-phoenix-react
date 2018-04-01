@@ -198,8 +198,8 @@ function Player({player, owner, onKickout, index}){
   }
 
   let ready_box_style = {
-    width: 150,
-    height: 150,
+    width: "100px",
+    height: "100px",
   };
   if (player.is_ready) {
     ready_box_style.background = 'url("/images/ready.png") no-repeat center/70%';
