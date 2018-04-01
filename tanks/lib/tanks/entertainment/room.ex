@@ -20,7 +20,9 @@ defmodule Tanks.Entertainment.Room do
             "/images/tank-green.png",
             "/images/tank-magenta.png",
             "/images/tank-purple.png",]
-    thumbnail = Enum.at(urls, length(room.players))
+    used_urls = Enum.map(room.players, fn p -> p.tank_thumbnail end)
+    available_urls = urls -- used_urls
+    thumbnail = Enum.random(available_urls)
 
     # if user already exists in the room
     if get_player_from_user(room, user) do
