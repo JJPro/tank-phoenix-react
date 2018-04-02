@@ -13,7 +13,8 @@ export default (props) => {
 
   let hp = tank ? tank.hp : 0;
   let hp_bar_container_style = {
-    width: "200px",
+    // width: "200px",
+    flexGrow: 1,
   };
   let hp_bar_style = {
     width: `${hp/4 * 100}%`,
