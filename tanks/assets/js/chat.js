@@ -12,14 +12,19 @@ export default class Chat extends Component {
   }
 
   render(){
-    let container_style = {
+    let outter_container_style = {
       flexGrow: 1,
+      position: "relative",
+    }
+    let container_style = {
       display: "flex",
       flexDirection: "column",
       border: "1px solid #ddd",
       boxShadow: "1px 3px 5px rgba(0,0,0,0.05)",
       borderRadius: "2px",
-      height: "440px",
+      position: "absolute",
+      width: "100%",
+      height: "100%",
     };
     let chat_window_style = {
       flexGrow: "1",
@@ -49,13 +54,15 @@ export default class Chat extends Component {
       margin: "0.5rem 0",
     }
     return (
-      <div className="sidebar-chat mt-3" style={container_style}>
-        <h5 className="text-center" style={header_style}>Chat Room</h5>
-        <div className="chat-window" style={chat_window_style}>
-          <div className="output" ref="output" style={output_style}></div>
-          <div className="feedback" ref="feedback"></div>
+      <div style={outter_container_style}>
+        <div className="sidebar-chat" style={container_style}>
+          <h5 className="text-center" style={header_style}>Chat Room</h5>
+          <div className="chat-window" style={chat_window_style}>
+            <div className="output" ref="output" style={output_style}></div>
+            <div className="feedback" ref="feedback"></div>
+          </div>
+          <input type="text" placeholder="Message, Press Enter to send" className="message" style={input_style} onKeyPress={this.sendMessage.bind(this)} />
         </div>
-        <input type="text" placeholder="Message, Press Enter to send" className="message" style={input_style} onKeyPress={this.sendMessage.bind(this)} />
       </div>
     );
   }
