@@ -4,9 +4,17 @@ defmodule Tanks.Entertainment.Room do
   alias Tanks.GameServer
 
   def new(name, user) do
+    urls = ["/images/tank-cyan.png",
+            "/images/tank-red.png",
+            "/images/tank-army-green.png",
+            "/images/tank-yellow.png",
+            "/images/tank-khaki.png",
+            "/images/tank-green.png",
+            "/images/tank-magenta.png",
+            "/images/tank-purple.png",]
     %{
       name: name,
-      players: [%{user: user, ready?: false, owner?: true, tank_thumbnail: "/images/tank-cyan.png"}],
+      players: [%{user: user, ready?: false, owner?: true, tank_thumbnail: Enum.random(urls)}],
       playing?: false,
     }
   end

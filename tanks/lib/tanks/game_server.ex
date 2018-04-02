@@ -31,7 +31,7 @@ defmodule Tanks.GameServer do
     # IO.puts "@@@@@@@@@@@@@@@ auto_update_state called"
 
     # loop:
-    Process.send_after(servername, :auto_update_state, 50) # 1000 / 20 = 20 => 20 FPS
+    Process.send_after(servername, :auto_update_state, 35) # 1000 / 20 = 50 => 20 FPS
 
     name = Atom.to_string(servername)
     clear_missiles = false

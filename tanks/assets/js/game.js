@@ -78,6 +78,7 @@ export default class Game extends Component{
             <h5 className="text-center">Instructions:</h5>
             <p><span className="p-2 font-weight-bold">Move:</span>↑,↓,←,→ | WASD</p>
             <p><span className="p-2 font-weight-bold">Shoot:</span>Shift | Space</p>
+            <p>Fire wisely, tank needs to cool down for <span className="font-weight-bold">700ms</span> after each firing.</p>
           </div>
 
           <Chat channel={socket.channel(`chat:${window.room_name}`)}/>
@@ -171,9 +172,24 @@ export default class Game extends Component{
       e.preventDefault();
       this.channel.push("move", {uid: window.user, direction: direction});
     }
-    if (fire){
+    if (fire && this.canFire()){
       e.preventDefault();
       this.channel.push("fire", {uid: window.user});
+    }
+  }
+
+  canFire(){
+    if (!this.lastFireMoment){
+      this.lastFireMoment = Date.now();
+      return true;
+    } else {
+      let now = Date.now();
+      if (now-this.lastFireMoment >= 700){
+        this.lastFireMoment = now;
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
