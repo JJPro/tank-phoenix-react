@@ -54,6 +54,7 @@ class Room extends Component {
       let button_start = '';
       let button_ready_cancel = '';
       let button_leave = '';
+      let button_join = '';
 
       // test whether current user is a player or observer
       // only show button options to players
@@ -71,6 +72,8 @@ class Room extends Component {
         if (current_player.is_owner)
         button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
       }
+      if (!current_player && players.length < 4)
+        button_join = <button className="btn btn-success btn-lg btn-join m-3" onClick={this.onObserverJoin.bind(this)}>Join</button>;
 
       let chat_container_style = {
         width: "250px",
@@ -89,6 +92,7 @@ class Room extends Component {
                 {button_ready_cancel}
                 {button_start}
                 {button_leave}
+                {button_join}
               </div>
             </div>
             <div className="chat-container" style={chat_container_style}>
@@ -175,6 +179,10 @@ class Room extends Component {
 
   onKickout(player_id){
     this.channel.push("kickout", {uid: player_id});
+  }
+
+  onObserverJoin(){
+    this.channel.push("enter", {uid: window.user});
   }
 }
 
