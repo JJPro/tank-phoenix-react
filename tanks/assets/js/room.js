@@ -226,7 +226,7 @@ function Player({player, owner, onKickout, index}){
 
   return (
     <div className="player-card-wrapper align-self-stretch p-3 text-center d-flex flex-column align-items-center">
-      <div className={`player-card ${owner_class} text-center`} style={card_style}>
+      <div className={`player-card ${owner_class} text-center d-flex flex-column align-items-center`} style={card_style}>
         <h2>{name}</h2>
         <div className="ready-box" style={ready_box_style}></div>
         {kickout_button}
