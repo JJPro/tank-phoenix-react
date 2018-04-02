@@ -178,7 +178,7 @@ export default class Game extends Component{
   }
 
   displayGameOver(){
-    let winner = this.state.tanks[0].player.id;
+    let winner = this.state.tanks.length > 0 ? this.state.tanks[0].player.id : -1;
     let greeting_msg = "Game Over";
     if (window.user == winner)
       greeting_msg = "Congrats! YOU WIN!!!";

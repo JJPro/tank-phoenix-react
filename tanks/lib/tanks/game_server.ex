@@ -47,7 +47,7 @@ defmodule Tanks.GameServer do
 
 
     # Handle game over situation
-    if length(game.tanks) == 1 && length(game.missiles) == 0 do
+    if length(game.tanks) <= 1 && length(game.missiles) == 0 do
       # broadcast current state
       GameChannel.broadcast_state(game, name)
       # update room with Room.end_game
