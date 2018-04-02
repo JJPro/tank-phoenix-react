@@ -190,6 +190,7 @@ function Player({player, owner, onKickout, index}){
     padding: 10,
     marginBottom: 20,
     border: 'gray solid 0.5px',
+    flexGrow: 1,
   };
   if (player.is_owner) {
     // card_wrapper_style.border = "5px solid green";
@@ -202,7 +203,7 @@ function Player({player, owner, onKickout, index}){
     height: "100px",
   };
   if (player.is_ready) {
-    ready_box_style.background = 'url("/images/ready.png") no-repeat center/70%';
+    ready_box_style.background = 'url("/images/ready.png") no-repeat center/100%';
   }
 
   let tank_thumbnail_style = {
@@ -215,18 +216,12 @@ function Player({player, owner, onKickout, index}){
   };
   tank_thumbnail_style.backgroundImage = `url(${player.tank_thumbnail})`;
 
-  let btn_kickout_wrapper_style = {
-    height: "2.5em"
-  };
-
   return (
-    <div className="player-card-wrapper align-self-stretch p-3 text-center">
+    <div className="player-card-wrapper align-self-stretch p-3 text-center d-flex flex-column align-items-center">
       <div className={`player-card ${owner_class} text-center`} style={card_style}>
         <h2>{name}</h2>
         <div className="ready-box" style={ready_box_style}></div>
-        <div className="btn-kickout-wrapper" style={btn_kickout_wrapper_style}>
-          {kickout_button}
-        </div>
+        {kickout_button}
       </div>
       <div className="tank-thumbnail" style={tank_thumbnail_style}></div>
     </div>
