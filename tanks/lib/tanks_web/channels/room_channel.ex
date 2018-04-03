@@ -119,6 +119,7 @@ defmodule TanksWeb.RoomChannel do
       :error -> RoomStore.delete(name)
                 # socket = assign(socket, :room, nil)
                 broadcast socket, "update_room", %{room: %{name: name, players: []}}
+                broadcast socket, "all_exit_room", %{}
                 TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: :deleted}})
     end
 

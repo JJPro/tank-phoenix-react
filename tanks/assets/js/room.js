@@ -155,6 +155,10 @@ class Room extends Component {
       }
       countdown_fn(7);
     });
+
+    this.channel.on("all_exit_room", () => {
+      setTimeout(() => window.location = "/", 700 );
+    });
   }
 
   onReady(){
@@ -167,6 +171,7 @@ class Room extends Component {
 
   onLeave(){
     this.channel.push("leave", {uid: window.user});
+
     window.location = "/";
   }
 
