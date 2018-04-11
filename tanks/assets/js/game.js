@@ -205,16 +205,16 @@ export default class Game extends Component{
     countdown.appendTo(gameover_layer);
     gameover_layer.appendTo('body');
     // animate countdown process
-    function countdown_fn(n){
-      countdown.html(`Returning to room in ${n}`);
-      if (n > 1){
-        setTimeout(() => countdown_fn(n-1), 1000);
-      } else {
-        // remove countdown layer, keyboard blocking will be automatically removed when element is removed.
-        gameover_layer.remove();
+    const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
+    async function countdown_fn(n){
+      while(n > 0){
+        countdown.html(`Returning to room in ${n}`);
+        n = await wait(1000).then( () => n-1 );
       }
+      // remove countdown layer, keyboard blocking will be automatically removed when element is removed.
+      gameover_layer.remove();
     }
-    countdown_fn(7);
+    countdown_fn(5);
   }
 
   is_player() {

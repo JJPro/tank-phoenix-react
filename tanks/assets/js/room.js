@@ -3,6 +3,8 @@ import {render} from 'react-dom';
 import socket from './socket';
 import Game from './game';
 import Chat from './chat';
+require('babel-core/register');
+require('babel-polyfill');
 
 
 export default (root) => {
@@ -143,17 +145,18 @@ class Room extends Component {
       countdown.appendTo('body');
       document.getElementById("active").addEventListener("keydown", blockKeyPress);
 
-      // animate countdown process
-      function countdown_fn(n){
-        countdown.html(n);
-        if (n > 0){
-          setTimeout(() => countdown_fn(n-1), 1000);
-        } else {
-          // remove countdown layer, keyboard blocking will be automatically removed when element is removed.
-          countdown.remove();
+      // animate countdown process with promises
+      const wait = ms => new Promise((resolve) => setTimeout(resolve, ms));
+      async function countdown_fn(n) {
+        while(n > 0){
+          countdown.html(n);
+          // n--
+          n = await wait(1000).then(() => n-1);
         }
+        countdown.remove();
       }
-      countdown_fn(7);
+
+      countdown_fn(5);
     });
 
     this.channel.on("all_exit_room", () => {
