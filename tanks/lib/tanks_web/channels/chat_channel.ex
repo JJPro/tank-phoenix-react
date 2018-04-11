@@ -3,6 +3,8 @@ defmodule TanksWeb.ChatChannel do
   alias Tanks.Accounts
 
   def join("chat:" <> name, payload, socket) do
+
+    # IO.inspect self, label: ">>>>>>>>> PID of chat channel"
     if authorized?(payload) do
       {:ok, socket}
     else

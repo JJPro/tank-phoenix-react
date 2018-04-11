@@ -41,7 +41,7 @@ defmodule Tanks.Entertainment.Room do
   end
 
   @doc """
-  :: {:ok, room} | {:error, nil}
+  :: {:ok, room} | {:last_player, nil} | {:no_exist, nil}
   3 scenarios:
     1. last player: destroy room, return {:error, nil}
     2. owner & other players in the room: shift owner to first player in line
@@ -51,7 +51,8 @@ defmodule Tanks.Entertainment.Room do
     player = get_player_from_user(room, user)
 
     cond do
-      length(room.players) == 1 -> {:error, nil} # last player
+      is_nil(player) -> {:no_exist, nil}
+      length(room.players) == 1 -> {:last_player, nil} # last player
       player.owner? -> # is owner
         new_players = List.delete(room.players, get_player_from_user(room, user) )
         [first | rest] = new_players

@@ -9,6 +9,7 @@ defmodule TanksWeb.RoomChannel do
     # IO.puts ">>>>>>>> join: room"
     # IO.puts ">>>>>>> payload: "
     # IO.inspect payload
+    # IO.inspect self, label: ">>>>>>>>> PID of room channel"
 
     if authorized?(payload) do
       # create or restore room
@@ -116,11 +117,14 @@ defmodule TanksWeb.RoomChannel do
                 # broadcast to home page viewers (list_rooms_channel.ex)
                 TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: Room.get_status(room)}})
 
-      :error -> RoomStore.delete(name)
+      :last_player -> RoomStore.delete(name)
                 # socket = assign(socket, :room, nil)
                 broadcast socket, "update_room", %{room: %{name: name, players: []}}
                 broadcast socket, "all_exit_room", %{}
                 TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: :deleted}})
+
+      :no_exist ->
+
     end
 
     {:noreply, socket}

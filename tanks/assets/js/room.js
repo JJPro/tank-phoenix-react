@@ -66,14 +66,14 @@ class Room extends Component {
         ?<button className="btn btn-outline-danger btn-lg btn-ready m-3" onClick={this.onCancel.bind(this)}>Cancel</button>
         :<button className="btn btn-outline-success btn-lg btn-ready m-3" onClick={this.onReady.bind(this)}>Ready</button>;
 
-        button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
-
         let disable_start = players.length < 2 || players.some( p => !p.is_ready );
         if (current_player.is_owner)
         button_start = <button className="btn btn-info btn-lg btn-start m-3"  onClick={this.onStart.bind(this)} disabled={disable_start}>Start</button>;
       }
       if (!current_player && players.length < 4)
         button_join = <button className="btn btn-success btn-lg btn-join m-3" onClick={this.onObserverJoin.bind(this)}>Join</button>;
+
+      button_leave = <button className="btn btn-outline-warning btn-lg btn-leave m-3" onClick={this.onLeave.bind(this)}>Leave</button>;
 
       let chat_container_style = {
         width: "250px",
@@ -89,10 +89,10 @@ class Room extends Component {
                 {players.map( (p, index) => <Player player={p} owner={owner} key={index} index={index} onKickout={this.onKickout.bind(this)} /> )}
               </div>
               <div className="d-flex justify-content-center flex-wrap p-3">
+                {button_join}
                 {button_ready_cancel}
                 {button_start}
                 {button_leave}
-                {button_join}
               </div>
             </div>
             <div className="chat-container" style={chat_container_style}>

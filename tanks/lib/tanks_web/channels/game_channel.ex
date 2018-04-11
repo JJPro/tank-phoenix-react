@@ -17,6 +17,8 @@ defmodule TanksWeb.GameChannel do
   """
   def join("game:"<>name, payload, socket) do
 
+    # IO.inspect self, label: ">>>>>>>>> PID of game channel"
+
     if authorized?(payload) do
       # new game process is attached by room_channel
       name = String.to_atom(name)
