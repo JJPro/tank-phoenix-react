@@ -3,8 +3,6 @@ import {render} from 'react-dom';
 import socket from './socket';
 import Game from './game';
 import Chat from './chat';
-require('babel-core/register');
-require('babel-polyfill');
 
 
 export default (root) => {
