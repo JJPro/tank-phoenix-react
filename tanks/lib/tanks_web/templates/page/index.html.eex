@@ -5,7 +5,7 @@
       window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
       window.room_url = "<%= room_path(@conn, :show, "placeholder") %>";
     </script>
-    <!-- <div class="container"> -->
+    <div class="container">
       <div class="row">
 
         <div class="col-lg-9">
@@ -25,6 +25,6 @@
           <div id="lobby-chat" style="display:flex; min-height:550px;" class="mt-4"></div>
         </div>
       </div>
-    <!-- </div> -->
+    </div>
   </div>
 </div>

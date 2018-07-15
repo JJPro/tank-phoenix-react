@@ -21,7 +21,7 @@ defmodule TanksWeb.ChatChannel do
     if authorized?(payload) do
       # load message history from chat store
       socket = assign(socket, :chat_room_name, chat_name)
-      chat_history = ChatStore.load_all_messages(chat_name)
+      chat_history = ChatStore.load_all_messages(chat_name) |> Enum.reverse
       {:ok, %{chat_history: chat_history}, socket}
     else
       {:error, %{reason: "unauthorized"}}
