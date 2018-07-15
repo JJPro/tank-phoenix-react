@@ -28,7 +28,7 @@ defmodule Tanks.ChatStore do
       Map.get(state, room)
     end
 
-    if chat_history, do: chat_history, else: []
+    if chat_history, do: chat_history |> Enum.reverse, else: []
   end
 
   def delete_chat(room) do
