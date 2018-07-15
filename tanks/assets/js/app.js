@@ -23,6 +23,9 @@ import socket from "./socket"
 import create_room_field from './room-create-input';
 import list_rooms from './list-rooms';
 import room_init from './room';
+import LobbyChat from "./chat";
+import React, {Component} from 'react';
+import {render} from 'react-dom';
 
 function init(){
   let create_room_field_root = document.getElementById('create-room-field');
@@ -38,6 +41,12 @@ function init(){
   let show_room_root = document.getElementById('room');
   if (show_room_root){
     room_init(show_room_root);
+  }
+
+  let lobby_chat_root = document.getElementById('lobby-chat');
+  if (lobby_chat_root){
+    let channel = socket.channel("lobby");
+    render(<LobbyChat channel={channel} />, lobby_chat_root);
   }
 }
 

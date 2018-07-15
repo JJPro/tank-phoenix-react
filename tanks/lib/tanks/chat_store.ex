@@ -12,9 +12,9 @@ defmodule Tanks.ChatStore do
   @spec save_message(string(), Map.t()) :: nil
   def save_message(room, %{sender_name: name, msg_body: body} = msg) do
     Agent.update __MODULE__, fn state ->
-      IO.inspect(state, label: ">>>>>>>>> chat agent state")
+      # IO.inspect(state, label: ">>>>>>>>> chat agent state")
       Map.update(state, room, [msg], fn messages ->
-        IO.inspect(messages, label: ">>>>>>>> chat store for room: #{room}")
+        # IO.inspect(messages, label: ">>>>>>>> chat store for room: #{room}")
         if length(messages) >= 100 do
           messages = List.delete_at(messages, 99)
         end

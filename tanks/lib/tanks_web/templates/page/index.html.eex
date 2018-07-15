@@ -5,15 +5,26 @@
       window.api_game_url = "<%= page_path(@conn, :get_room_status, "placeholder") %>";
       window.room_url = "<%= room_path(@conn, :show, "placeholder") %>";
     </script>
-    <div class="section section-create-room">
-      <div id="create-room-field"></div>
-    </div>
-    <div class="divider"><span>OR</span></div>
+    <!-- <div class="container"> -->
+      <div class="row">
+
+        <div class="col-lg-9">
+          <div class="section section-create-room">
+            <div id="create-room-field"></div>
+          </div>
+          <div class="divider"><span>OR</span></div>
 
 
-    <div class="section section-join-others">
-      <h2>Join Others</h2>
-      <div id="rooms-list"></div>
-    </div>
+          <div class="section section-join-others">
+            <h2>Join Others</h2>
+            <div id="rooms-list"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div id="lobby-chat" style="display:flex; min-height:550px;" class="mt-4"></div>
+        </div>
+      </div>
+    <!-- </div> -->
   </div>
 </div>
