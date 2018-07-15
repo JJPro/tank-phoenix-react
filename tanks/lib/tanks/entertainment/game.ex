@@ -63,9 +63,9 @@ defmodule Tanks.Entertainment.Game do
   - update coordinates moving in orientation direction for 1 unit
   -
   """
-  def move(game, player, direction) do
+  def move(game, player_id, direction) do
     tanks = Enum.map(game.tanks, fn t ->
-      if t.player == player do
+      if t.player.user.id == player_id do
         case direction do
           :up -> %Tank{t | orientation: direction, y: (if can_tank_move?(:up, t, game), do: t.y-1, else: t.y)}
           :down -> %Tank{t | orientation: direction, y: (if can_tank_move?(:down, t, game), do: t.y+1, else: t.y)}
@@ -91,8 +91,8 @@ defmodule Tanks.Entertainment.Game do
       - direction: tank.orientation
       [missile | game.missiles]
   """
-  def fire(game, player) do
-    tank = game.tanks |> Enum.find(fn t -> t.player == player end)
+  def fire(game, player_id) do
+    tank = game.tanks |> Enum.find(fn t -> t.player.user.id == player_id end)
     # IO.inspect %{event: "fireing", tank: tank}
     if tank do
       missile = case tank.orientation do

@@ -6,14 +6,21 @@ defmodule TanksWeb.ChatChannel do
 
     # IO.inspect self, label: ">>>>>>>>> PID of chat channel"
     if authorized?(payload) do
+      IO.inspect(socket.assigns, label: ">>>>>>>>>>>$$$$$$$$$$")
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
   end
 
+  def terminate(_msg, socket) do
+    IO.puts ">>>>>> chat channel terminated"
+    {:shutdown, :closed}
+  end
+
   def handle_in("chat", %{"uid" => uid, "message" => msg} = payload, socket) do
     user = Accounts.get_user!(uid)
+    socket = assign(socket, :message, msg)
     broadcast socket, "chat", %{uid: uid, message: msg, name: user.name}
     {:noreply, socket}
   end

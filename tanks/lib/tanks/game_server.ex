@@ -80,13 +80,13 @@ defmodule Tanks.GameServer do
     {:reply, game, state}
   end
 
-  def handle_call({:fire, player}, _, {servername, game}) do
-    game = Game.fire(game, player)
+  def handle_call({:fire, player_id}, _, {servername, game}) do
+    game = Game.fire(game, player_id)
     {:reply, game, {servername, game}}
   end
 
-  def handle_call({:move, player, direction}, _, {servername, game}) do
-    game = Game.move(game, player, direction)
+  def handle_call({:move, player_id, direction}, _, {servername, game}) do
+    game = Game.move(game, player_id, direction)
     {:reply, game, {servername, game}}
   end
 

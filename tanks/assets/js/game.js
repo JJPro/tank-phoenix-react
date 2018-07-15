@@ -170,11 +170,11 @@ export default class Game extends Component{
 
     if (direction){
       e.preventDefault();
-      this.channel.push("move", {uid: window.user, direction: direction});
+      this.channel.push("move", {direction: direction});
     }
     if (fire && this.canFire()){
       e.preventDefault();
-      this.channel.push("fire", {uid: window.user});
+      this.channel.push("fire");
     }
   }
 

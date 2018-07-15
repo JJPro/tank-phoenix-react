@@ -47,7 +47,7 @@ class Room extends Component {
   //    otherwise, render room.
   render(){
     if (this.state.is_playing){
-      return (<Game channel={socket.channel(`game:${this.state.name}`)} players={this.state.players}/>);
+      return (<Game channel={socket.channel(`game:${this.state.name}`, {uid: window.user})} players={this.state.players}/>);
     } else {
 
       let {name, players} = this.state;

@@ -27,7 +27,8 @@ defmodule TanksWeb.GameChannel do
       if GenServer.whereis(name) do
         game = GenServer.call(name, :get_state)
         {:ok, Game.client_view(game), socket |> assign(:name, name)
-                                             |> assign(:game, game)}
+                                             |> assign(:game, game)
+                                             |> assign(:uid, payload["uid"])}
       else
         {:error, %{reason: "terminated"}}
       end
@@ -40,12 +41,12 @@ defmodule TanksWeb.GameChannel do
   1. ask game_server to fire
   2. send state->gameview to client
   """
-  def handle_in("fire", %{"uid" => uid}, %{assigns: %{name: name}} = socket) do
+  def handle_in("fire", _msg, %{assigns: %{name: name}} = socket) do
     # IO.puts ">>>>>>>>>>>>>>>>>>>>>>> FIREING <<<<<<<<<<<<<"
     # IO.inspect %{user: uid}
+    uid = socket.assigns.uid
     game = GenServer.call(name, :get_state)
-    player = Game.get_player_from_uid(game, uid)
-    game = GenServer.call(name, {:fire, player})
+    game = GenServer.call(name, {:fire, uid})
     broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:noreply, socket}
   end
@@ -54,10 +55,10 @@ defmodule TanksWeb.GameChannel do
   1. ask game_server to move player
   2. send state->gameview to client
   """
-  def handle_in("move", %{"uid" => uid, "direction" => direction}, %{assigns: %{name: name}} = socket) do
+  def handle_in("move", %{"direction" => direction}, %{assigns: %{name: name}} = socket) do
+    uid = socket.assigns.uid
     game = GenServer.call(name, :get_state)
-    player = Game.get_player_from_uid(game, uid)
-    game = GenServer.call(name, {:move, player, String.to_atom(direction)})
+    game = GenServer.call(name, {:move, uid, String.to_atom(direction)})
     broadcast socket, "update_game", %{game: Game.client_view(game)}
     {:noreply, socket}
   end
