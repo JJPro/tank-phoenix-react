@@ -3,6 +3,7 @@ defmodule TanksWeb.UserController do
 
   alias Tanks.Accounts
   alias Tanks.Accounts.User
+  plug TanksWeb.Plugs.RequireAuth when action in [:edit, :update, :delete, :show]
 
   def index(conn, _params) do
     users = Accounts.list_users()
@@ -26,14 +27,28 @@ defmodule TanksWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.html", user: user)
+    cond do
+      conn.assigns.current_user.id == id |> String.to_integer ->
+        user = Accounts.get_user!(id)
+        render(conn, "show.html", user: user)
+      true ->
+        conn
+        |> put_flash(:error, "Please be a nice citizen!")
+        |> redirect(to: page_path(conn, :index))
+    end
   end
 
   def edit(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    changeset = Accounts.change_user(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+    cond do
+      conn.assigns.current_user.id == id |> String.to_integer ->
+        user = Accounts.get_user!(id)
+        changeset = Accounts.change_user(user)
+        render(conn, "edit.html", user: user, changeset: changeset)
+      true ->
+        conn
+        |> put_flash(:error, "Please be a nice citizen!")
+        |> redirect(to: page_path(conn, :index))
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do

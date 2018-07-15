@@ -75,5 +75,5 @@ exports.config = {
       _: 'underscore',
       $: 'jquery'
     }
-  }
+  }, 
 };

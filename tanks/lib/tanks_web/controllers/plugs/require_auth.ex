@@ -8,7 +8,7 @@ defmodule TanksWeb.Plugs.RequireAuth do
   end
 
   @doc """
-  Put user struct into conn
+  Make sure user is logged in
   """
   def call(conn, _params) do
     if conn.assigns.current_user do

@@ -27,7 +27,7 @@ defmodule TanksWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/users", UserController
+    resources "/users", UserController, except: [:index, :new]
     get "/room/:name", RoomController, :show
   end
 

@@ -20,6 +20,11 @@ defmodule Tanks.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Tanks.Supervisor]
+
+    # for users-online indicator
+    if :ets.info(:users_online) == :undefined do
+      :ets.new(:users_online, [:named_table, :public])
+    end
     Supervisor.start_link(children, opts)
   end
 
