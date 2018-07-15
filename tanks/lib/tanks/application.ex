@@ -15,6 +15,7 @@ defmodule Tanks.Application do
       # Start your own worker by calling: Tanks.Worker.start_link(arg1, arg2, arg3)
       # worker(Tanks.Worker, [arg1, arg2, arg3]),
       worker(Tanks.RoomStore, []),
+      worker(Tanks.ChatStore, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -34,4 +35,5 @@ defmodule Tanks.Application do
     TanksWeb.Endpoint.config_change(changed, removed)
     :ok
   end
+
 end

@@ -23,6 +23,7 @@ defmodule TanksWeb.RoomChannel do
 
         room = Room.new(name, Accounts.get_user!(uid))
         RoomStore.save(name, room)
+
         room
       end
 
@@ -123,6 +124,8 @@ defmodule TanksWeb.RoomChannel do
                 broadcast socket, "all_exit_room", %{}
                 TanksWeb.Endpoint.broadcast("list_rooms", "rooms_status_updated", %{room: %{name: name, status: :deleted}})
 
+                # delete chat history to this room as well.
+                Tanks.RoomStore.delete("chat:#{name}")
       :no_exist ->
 
     end
